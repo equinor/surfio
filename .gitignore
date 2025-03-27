@@ -1,0 +1,10 @@
+.cache/
+
+# CMake build artifacts
+build/
+out/
+compile_commands.json
+
+# python artifacts
+__pycache__
+**/*.egg-info/
