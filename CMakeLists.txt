@@ -28,8 +28,8 @@ FetchContent_Declare(
   GIT_TAG 20250206)
 FetchContent_MakeAvailable(llfio)
 
-find_package(Python 3.10 REQUIRED COMPONENTS Development.Module Interpreter
-                                             NumPy)
+find_package(Python 3.9 REQUIRED COMPONENTS Development.Module Interpreter
+                                            NumPy)
 
 # surfio_lib
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/lib")

@@ -20,7 +20,7 @@ classifiers = [
 ]
 readme = "README.md"
 license = { text = "GPL-3.0" }
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 dependencies = [
     "numpy",
 ]
@@ -34,7 +34,7 @@ dev = [
 
 [tool.mypy]
 files = "setup.py"
-python_version = "3.10"
+python_version = "3.9"
 strict = true
 show_error_codes = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
@@ -55,14 +55,15 @@ filterwarnings = [
 testpaths = ["tests"]
 
 [tool.cibuildwheel]
-# test-command = "pytest {project}/tests"
-# test-extras = ["test"]
-# test-skip = ["*universal2:arm64"]
-# Setuptools bug causes collision between pypy and cpython artifacts
-before-build = "rm -rf {project}/build"
+manylinux-x86_64-image = "manylinux_2_28"
+test-extras = ["dev"]
+before-build = "python -m pip install -U pip && rm -rf {project}/build"
+test-command = [
+    "pytest {project}/tests",
+]
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py39"
 
 [tool.ruff.lint]
 extend-select = [
