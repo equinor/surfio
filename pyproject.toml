@@ -25,6 +25,8 @@ dependencies = [
     "numpy",
 ]
 
+[tool.setuptools_scm]
+
 [project.optional-dependencies]
 dev = [
     "pytest",
