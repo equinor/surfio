@@ -29,6 +29,7 @@ jobs:
           # - [macos-latest, macosx_arm64]  # macos-latest is always arm64 going forward
     env:
       CIBW_BUILD: ${{ matrix.python[1] }}-${{ matrix.os_arch[1] }}
+      CIBW_ENVIRONMENT: "CMAKE_POLICY_VERSION_MINIMUM=3.5" # Needed for build of quicklibcpp
 
     steps:
       - uses: actions/checkout@v4
