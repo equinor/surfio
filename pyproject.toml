@@ -56,6 +56,14 @@ testpaths = ["tests"]
 
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux_2_28"
+manylinux-i686-image = "manylinux_2_28"
+manylinux-pypy_x86_64-image = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
+manylinux-ppc64le-image = "manylinux_2_28"
+manylinux-s390x-image = "manylinux_2_28"
+manylinux-pypy_aarch64-image = "manylinux_2_28"
+manylinux-pypy_i686-image = "manylinux_2_28"
+
 test-extras = ["dev"]
 before-build = "python -m pip install -U pip && rm -rf {project}/build"
 test-command = [
