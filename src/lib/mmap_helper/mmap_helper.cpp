@@ -1,38 +1,31 @@
 #include "mmap_helper.h"
-#include "llfio/llfio.hpp"
+#include <boost/iostreams/device/mapped_file.hpp>
+#include <filesystem>
 #include <format>
 #include <stdexcept>
 
-namespace llfio = LLFIO_V2_NAMESPACE;
+using namespace boost::iostreams;
 struct internals {
-  llfio::mapped_file_handle handle;
-  const char* end;
+  mapped_file_source handle;
 };
 
-mmap_file::mmap_file(const std::string& filename) {
-  auto result = llfio::mapped_file({}, filename);
-  if (!result) {
-    throw std::runtime_error(
-        std::format(
-            "failed to map file :{}, with error: {}", filename,
-            result.error().message()
-        )
-    );
-  }
-  auto& file_handle = result.value();
+namespace fs = std::filesystem;
 
-  auto length = file_handle.maximum_extent().value();
-  if (length == 0)
+mmap_file::mmap_file(const std::string& filename) {
+  if (!fs::exists(filename))
+    throw std::invalid_argument(std::format("file not found: {}", filename));
+
+  if (!fs::file_size(filename))
     throw std::length_error(std::format("file is empty: {}", filename));
 
-  d = std::make_unique<internals>(
-      std::move(file_handle),
-      reinterpret_cast<const char*>(file_handle.address() + length)
-  );
+  auto file = mapped_file_source(filename);
+  if (!file.is_open()) {
+    throw std::runtime_error(std::format("failed to map file :{}", filename));
+  }
+
+  d = std::make_unique<internals>(std::move(file));
 }
 
-mmap_file::~mmap_file() { std::ignore = d->handle.close(); }
-const char* mmap_file::begin() const {
-  return reinterpret_cast<const char*>(d->handle.address());
-}
-const char* mmap_file::end() const { return d->end; }
+mmap_file::~mmap_file() {}
+const char* mmap_file::begin() const { return d->handle.begin(); }
+const char* mmap_file::end() const { return d->handle.end(); }
