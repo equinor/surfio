@@ -20,15 +20,13 @@ jobs:
         python:
           - ["3.11", cp311]
           - ["3.12", cp312]
-          - ["3.13", cp313]
         os_arch:
           - [ubuntu-latest, manylinux_x86_64]
           # - [windows-latest, win_amd64]
-          # - [macos-13, macosx_x86_64]  # macos-13 is the last x86-64 runner
-          # - [macos-latest, macosx_arm64]  # macos-latest is always arm64 going forward
+          # - [macos-13, macosx_x86_64] # macos-13 is the last x86-64 runner
+          # - [macos-latest, macosx_arm64] # macos-latest is always arm64 going forward
     env:
       CIBW_BUILD: ${{ matrix.python[1] }}-${{ matrix.os_arch[1] }}
-      CIBW_ENVIRONMENT: "CMAKE_POLICY_VERSION_MINIMUM=3.5" # Needed for build of quicklibcpp
 
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +37,20 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python[0] }}
+
+      - name: Set up gcc-14
+        if: ${{ contains(runner.os, 'macos') }}
+        run: |
+          echo "CC=gcc-14" >> $GITHUB_ENV
+          echo "CXX=g++-14" >> $GITHUB_ENV
+          echo "LD=ld" >> $GITHUB_ENV
+          echo "AR=gcc-ar-14" >> $GITHUB_ENV
+          echo "RANLIB=gcc-ranlib-14" >> $GITHUB_ENV
+          echo "MACOSX_DEPLOYMENT_TARGET=13.0" >> $GITHUB_ENV
+
+      - name: Set up gcc-14 on arm
+        if: ${{ contains(runner.arch, 'ARM64') }}
+        run: echo "MACOSX_DEPLOYMENT_TARGET=14.0" >> $GITHUB_ENV
 
       - name: Install cibuildwheel
         run: python -m pip install -U pip wheel cibuildwheel twine
