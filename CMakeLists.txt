@@ -7,8 +7,8 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 if(MSVC)
-  add_compile_options(/W4 /Wx /sdl /permissive-)
-  set(CMAKE_CXX_FLAGS_RELEASE "/O2 /Oi /Gy /Gl")
+  add_compile_options(/W4 /WX /sdl /permissive-)
+  set(CMAKE_CXX_FLAGS_RELEASE "/O2 /Oi /Gy /GL")
 else()
   add_compile_options(-Wall -Wextra -Werror)
   set(CMAKE_CXX_FLAGS_RELEASE "-O3")
@@ -34,7 +34,6 @@ target_sources(surfio_lib PRIVATE ${SRC_PATH}/mmap_helper/mmap_helper.cpp
                                   ${SRC_PATH}/irap_import.cpp)
 target_include_directories(surfio_lib INTERFACE ${SRC_PATH}/include)
 target_link_libraries(surfio_lib PRIVATE Boost::iostreams)
-target_compile_options(surfio_lib PRIVATE -pedantic)
 
 # surfio python module
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/pybind_module")
