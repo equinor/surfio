@@ -1,6 +1,6 @@
-import surfio
 import numpy as np
 import pytest
+import surfio
 
 
 @pytest.mark.parametrize("func", [str, repr])
