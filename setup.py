@@ -44,13 +44,14 @@ class CMakeBuild(build_ext):
                 f"build_type={cfg}",
                 f"--output-folder={extdir}",
                 "-c",
-                "tools.cmake.cmaketoolchain:user_presets=False",
+                "tools.cmake.cmake_layout:build_folder_vars=['const.wheel', 'options.build_type']",
             ],
             check=True,
         )
 
         cmake_args = [
             f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}{os.sep}",
+            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}{os.sep}",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
         ]
         build_args = []
@@ -58,23 +59,21 @@ class CMakeBuild(build_ext):
         if "CMAKE_ARGS" in os.environ:
             cmake_args += [item for item in os.environ["CMAKE_ARGS"].split(" ") if item]
 
-        build_folder = extdir / f"build/{cfg}/"
-
         subprocess.run(
             [
                 "cmake",
-                f"-DCMAKE_TOOLCHAIN_FILE={build_folder}/generators/conan_toolchain.cmake",
-                f"-DCMAKE_BUILD_TYPE={cfg}",
-                "-S",
-                ext.sourcedir,
-                "-B",
-                build_folder,
+                f"--preset conan-wheel{'' if sys.platform.startswith('win') else '-' + cfg.lower()}",
                 *cmake_args,
             ],
             check=True,
         )
         subprocess.run(
-            ["cmake", "--build", build_folder, *build_args],
+            [
+                "cmake",
+                "--build",
+                f"--preset conan-wheel-{cfg.lower()}",
+                *build_args,
+            ],
             check=True,
         )
 
