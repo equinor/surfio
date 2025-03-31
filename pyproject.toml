@@ -1,5 +1,13 @@
 [build-system]
-requires = ["setuptools>=42", "wheel", "ninja", "cmake>=3.22", "numpy", "setuptools_scm>=8.1", "conan>=2.0"]
+requires = [
+  "setuptools>=42",
+  "wheel",
+  "ninja",
+  "cmake>=3.22",
+  "numpy",
+  "setuptools_scm>=8.1",
+  "conan>=2.0",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,32 +15,26 @@ name = "surfio"
 description = "Reader/Writer library for irap files."
 dynamic = ["version"]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
-    "Environment :: Other Environment",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
-    "Natural Language :: English",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Scientific/Engineering",
-    "Topic :: Scientific/Engineering :: Physics",
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Other Environment",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Physics",
 ]
 readme = "README.md"
 license = { text = "GPL-3.0" }
 requires-python = ">=3.9"
-dependencies = [
-    "numpy",
-]
+dependencies = ["numpy"]
 
 [tool.setuptools_scm]
 
 [project.optional-dependencies]
-dev = [
-    "pytest",
-    "pytest-snapshot",
-    "pre-commit",
-]
+dev = ["pytest", "pytest-snapshot", "pre-commit"]
 
 [tool.mypy]
 files = "setup.py"
@@ -68,9 +70,7 @@ manylinux-pypy_i686-image = "manylinux_2_28"
 
 test-extras = ["dev"]
 before-build = "python -m pip install -U pip && rm -rf {project}/build"
-test-command = [
-    "pytest {project}/tests",
-]
+test-command = ["pytest {project}/tests"]
 
 [tool.ruff]
 target-version = "py39"
