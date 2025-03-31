@@ -22,14 +22,10 @@ FetchContent_Declare(
   GIT_TAG v2.13)
 FetchContent_MakeAvailable(pybind11)
 
-FetchContent_Declare(
-  llfio
-  GIT_REPOSITORY https://github.com/ned14/llfio
-  GIT_TAG 20250206)
-FetchContent_MakeAvailable(llfio)
-
 find_package(Python 3.9 REQUIRED COMPONENTS Development.Module Interpreter
                                             NumPy)
+cmake_policy(SET CMP0167 NEW)
+find_package(Boost REQUIRED COMPONENTS iostreams)
 
 # surfio_lib
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/lib")
@@ -37,7 +33,7 @@ add_library(surfio_lib STATIC)
 target_sources(surfio_lib PRIVATE ${SRC_PATH}/mmap_helper/mmap_helper.cpp
                                   ${SRC_PATH}/irap_import.cpp)
 target_include_directories(surfio_lib INTERFACE ${SRC_PATH}/include)
-target_link_libraries(surfio_lib PRIVATE llfio::sl)
+target_link_libraries(surfio_lib PRIVATE Boost::iostreams)
 target_compile_options(surfio_lib PRIVATE -pedantic)
 
 # surfio python module

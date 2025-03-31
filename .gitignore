@@ -4,7 +4,10 @@
 build/
 out/
 compile_commands.json
+CMakeUserPresets.json
 
 # python artifacts
 __pycache__
 **/*.egg-info/
+
+src/surfio.cpython*.so
