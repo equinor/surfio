@@ -35,23 +35,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Brew install gcc
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python[0] }}
+
+      - name: Set up gcc-14
         if: ${{ contains(runner.os, 'macos') }}
         run: |
-          brew update
-          brew install gcc@14
-          echo "/usr/local/Cellar/gcc/bin" >> $GITHUB_PATH
           echo "CC=gcc-14" >> $GITHUB_ENV
           echo "CXX=g++-14" >> $GITHUB_ENV
           echo "LD=ld" >> $GITHUB_ENV
           echo "AR=gcc-ar-14" >> $GITHUB_ENV
           echo "RANLIB=gcc-ranlib-14" >> $GITHUB_ENV
           echo "MACOSX_DEPLOYMENT_TARGET=13.0" >> $GITHUB_ENV
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python[0] }}
 
       - name: Install cibuildwheel
         run: python -m pip install -U pip wheel cibuildwheel twine
