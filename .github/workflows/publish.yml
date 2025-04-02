@@ -18,10 +18,10 @@ jobs:
       fail-fast: false
       matrix:
         python:
-          - ['3.9', cp39]
-          - ['3.10', cp310]
-          - ['3.11', cp311]
-          - ['3.12', cp312]
+          - ["3.9", cp39]
+          - ["3.10", cp310]
+          - ["3.11", cp311]
+          - ["3.12", cp312]
         os_arch:
           - [ubuntu-latest, manylinux_x86_64]
           # - [windows-latest, win_amd64]
@@ -65,14 +65,14 @@ jobs:
       id-token: write
 
     steps:
-    - uses: actions/download-artifact@v4
-      with:
-        pattern: cibw-*
-        path: wheelhouse
-        merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cibw-*
+          path: wheelhouse
+          merge-multiple: true
 
-    - uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        skip-existing: true
-        packages-dir: wheelhouse
-        verbose: true
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
+          packages-dir: wheelhouse
+          verbose: true
