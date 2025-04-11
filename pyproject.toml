@@ -32,7 +32,7 @@ dependencies = ["numpy"]
 [tool.setuptools_scm]
 
 [project.optional-dependencies]
-dev = ["pytest", "pytest-snapshot", "pre-commit"]
+dev = ["pytest", "pre-commit", "pytest-snapshot", "xtgeo"]
 
 [tool.mypy]
 files = "setup.py"
