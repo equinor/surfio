@@ -2,12 +2,7 @@
 #include "mmap_helper/mmap_helper.h"
 #include <algorithm>
 #include <charconv>
-#include <cmath>
 #include <format>
-#include <locale>
-#include <stdexcept>
-#include <tuple>
-#include <vector>
 
 auto locale = std::locale("C");
 auto& facet = std::use_facet<std::ctype<char>>(locale);
@@ -97,7 +92,7 @@ get_values(const char* start, const char* end, int nx, int ny) {
 }
 
 irap import_irap_ascii(std::string path) {
-  auto buffer = mmap_file(std::move(path));
+  auto buffer = mmap_file(path);
 
   auto [head, ptr] = get_header(buffer.begin(), buffer.end());
   auto values = get_values(ptr, buffer.end(), head.nx, head.ny);
@@ -105,10 +100,10 @@ irap import_irap_ascii(std::string path) {
   return {.header = std::move(head), .values = std::move(values)};
 }
 
-irap import_irap_ascii_string(const std::string& string) {
-  auto buffer = string.c_str();
-  auto buffer_end = buffer + string.size();
-  auto [head, ptr] = get_header(buffer, buffer_end);
+irap import_irap_ascii_from_string(const std::string& buffer) {
+  auto buffer_begin = buffer.c_str();
+  auto buffer_end = buffer_begin + buffer.size();
+  auto [head, ptr] = get_header(buffer_begin, buffer_end);
   auto values = get_values(ptr, buffer_end, head.nx, head.ny);
 
   return {.header = std::move(head), .values = std::move(values)};
