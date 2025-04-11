@@ -22,6 +22,15 @@ FetchContent_Declare(
   GIT_TAG v2.13)
 FetchContent_MakeAvailable(pybind11)
 
+# mdspan is part of C++23. kokkos/mdspan is the reference implementation for the
+# standard proposal. This can be removed when all needed compilers/libs support
+# it.
+FetchContent_Declare(
+  mdspan
+  GIT_REPOSITORY https://github.com/kokkos/mdspan.git
+  GIT_TAG mdspan-0.6.0)
+FetchContent_MakeAvailable(mdspan)
+
 find_package(Python 3.9 REQUIRED COMPONENTS Development.Module Interpreter
                                             NumPy)
 cmake_policy(SET CMP0167 NEW)
@@ -30,10 +39,19 @@ find_package(Boost REQUIRED COMPONENTS iostreams)
 # surfio_lib
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/lib")
 add_library(surfio_lib STATIC)
-target_sources(surfio_lib PRIVATE ${SRC_PATH}/mmap_helper/mmap_helper.cpp
-                                  ${SRC_PATH}/irap_import.cpp)
-target_include_directories(surfio_lib INTERFACE ${SRC_PATH}/include)
-target_link_libraries(surfio_lib PRIVATE Boost::iostreams)
+target_sources(
+  surfio_lib
+  PRIVATE ${SRC_PATH}/mmap_helper/mmap_helper.cpp
+          ${SRC_PATH}/irap_import_ascii.cpp ${SRC_PATH}/irap_import_binary.cpp
+          ${SRC_PATH}/irap_export_ascii.cpp ${SRC_PATH}/irap_export_binary.cpp)
+target_include_directories(
+  surfio_lib
+  INTERFACE ${SRC_PATH}/include
+  PUBLIC $<BUILD_INTERFACE:${mdspan_SOURCE_DIR}/include/>)
+target_link_libraries(
+  surfio_lib
+  PRIVATE Boost::iostreams
+  INTERFACE mdspan)
 
 # surfio python module
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/pybind_module")
