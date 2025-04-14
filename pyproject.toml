@@ -23,6 +23,7 @@ classifiers = [
   "Programming Language :: Python",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering",
   "Topic :: Scientific/Engineering :: Physics",
 ]
@@ -38,7 +39,7 @@ dev = ["pytest", "pytest-snapshot", "pre-commit"]
 
 [tool.mypy]
 files = "setup.py"
-python_version = "3.9"
+python_version = "3.11"
 strict = true
 show_error_codes = true
 enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
