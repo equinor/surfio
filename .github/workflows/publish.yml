@@ -55,6 +55,9 @@ jobs:
       - name: Install cibuildwheel
         run: python -m pip install -U pip wheel cibuildwheel twine
 
+      - name: Run conan
+        run: conan install . --build=missing -s compiler.cppstd=20 -s build_type=Release -c "tools.cmake.cmake_layout:build_folder_vars=['const.wheel', 'options.build_type']"
+
       - name: Run cibuildwheel
         run: cibuildwheel --output-dir wheelhouse
 
