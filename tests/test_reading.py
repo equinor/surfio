@@ -30,7 +30,7 @@ def test_irap_surface_string_representation(func):
 def test_reading_empty_file_errors(tmp_path):
     irap_path = tmp_path / "test.irap"
     irap_path.write_text("")
-    with pytest.raises(ValueError, match="file is empty"):
+    with pytest.raises(RuntimeError, match="failed to map file"):
         surfio.IrapSurface.import_ascii_file(str(irap_path))
 
 
