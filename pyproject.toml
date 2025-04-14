@@ -6,7 +6,6 @@ requires = [
   "cmake>3.22,<4.0",
   "numpy",
   "setuptools_scm>=8.1",
-  "conan>=2.0",
 ]
 build-backend = "setuptools.build_meta"
 

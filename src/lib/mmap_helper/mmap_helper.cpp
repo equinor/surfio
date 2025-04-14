@@ -1,29 +1,27 @@
 #include "mmap_helper.h"
-#include <boost/iostreams/device/mapped_file.hpp>
-#include <filesystem>
+#include "mio.hpp"
 #include <format>
 #include <stdexcept>
 
-using namespace boost::iostreams;
 struct internals {
-  mapped_file_source handle;
+  mio::mmap_source handle;
 };
 
-namespace fs = std::filesystem;
-
 mmap_file::mmap_file(const std::string& filename) {
-  if (!fs::exists(filename))
-    throw std::invalid_argument(std::format("file not found: {}", filename));
-
-  if (!fs::file_size(filename))
-    throw std::length_error(std::format("file is empty: {}", filename));
-
-  auto file = mapped_file_source(filename);
-  if (!file.is_open()) {
-    throw std::runtime_error(std::format("failed to map file :{}", filename));
+  std::error_code ec;
+  auto handle = mio::make_mmap_source(filename, ec);
+  if (ec) {
+    throw std::runtime_error(
+        std::format(
+            "failed to map file :{}, with error: {}", filename, ec.message()
+        )
+    );
   }
 
-  d = std::make_unique<internals>(std::move(file));
+  if (handle.begin() == handle.end())
+    throw std::length_error(std::format("file is empty: {}", filename));
+
+  d = std::make_unique<internals>(std::move(handle));
 }
 
 mmap_file::~mmap_file() {}

@@ -22,18 +22,25 @@ FetchContent_Declare(
   GIT_TAG v2.13)
 FetchContent_MakeAvailable(pybind11)
 
+FetchContent_Declare(
+  mio
+  GIT_REPOSITORY https://github.com/vimpunk/mio
+  GIT_TAG 8b6b7d878c89e81614d05edca7936de41ccdd2da)
+FetchContent_MakeAvailable(mio)
+
 find_package(Python 3.9 REQUIRED COMPONENTS Development.Module Interpreter
                                             NumPy)
 cmake_policy(SET CMP0167 NEW)
-find_package(Boost REQUIRED COMPONENTS iostreams)
 
 # surfio_lib
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/lib")
 add_library(surfio_lib STATIC)
 target_sources(surfio_lib PRIVATE ${SRC_PATH}/mmap_helper/mmap_helper.cpp
                                   ${SRC_PATH}/irap_import.cpp)
-target_include_directories(surfio_lib INTERFACE ${SRC_PATH}/include)
-target_link_libraries(surfio_lib PRIVATE Boost::iostreams)
+target_include_directories(
+  surfio_lib
+  INTERFACE ${SRC_PATH}/include
+  PRIVATE ${mio_SOURCE_DIR}/single_include/mio)
 
 # surfio python module
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/pybind_module")
