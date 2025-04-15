@@ -1,6 +1,7 @@
 #include "include/irap_export.h"
 #include <algorithm>
 #include <array>
+#include <bit>
 #include <cmath>
 #include <fstream>
 #include <sstream>
