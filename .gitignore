@@ -1,9 +1,9 @@
-.cache/
-
 # CMake build artifacts
 build/
 out/
 compile_commands.json
+
+# Local cmake presets
 CMakeUserPresets.json
 
 # python artifacts
@@ -11,3 +11,7 @@ __pycache__
 **/*.egg-info/
 
 src/surfio.cpython*.so
+
+# IDE files
+.idea
+.vscode

@@ -3,7 +3,7 @@ requires = [
   "setuptools>=42",
   "wheel",
   "ninja",
-  "cmake>=3.22",
+  "cmake>3.22,<4.0",
   "numpy",
   "setuptools_scm>=8.1",
   "conan>=2.0",
@@ -18,18 +18,16 @@ classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Other Environment",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: MIT License",
   "Natural Language :: English",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering",
   "Topic :: Scientific/Engineering :: Physics",
 ]
 readme = "README.md"
-license = { text = "GPL-3.0" }
-requires-python = ">=3.9"
+license = "MIT"
+requires-python = ">=3.11"
 dependencies = ["numpy"]
 
 [tool.setuptools_scm]
@@ -53,28 +51,21 @@ ignore_missing_imports = true
 minversion = "6.0"
 addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
 xfail_strict = true
-filterwarnings = [
-  "error",
-  "ignore:(ast.Str|Attribute s|ast.NameConstant|ast.Num) is deprecated:DeprecationWarning:_pytest",
-]
+filterwarnings = ["error"]
 testpaths = ["tests"]
 
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux_2_28"
-manylinux-i686-image = "manylinux_2_28"
-manylinux-pypy_x86_64-image = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
-manylinux-ppc64le-image = "manylinux_2_28"
-manylinux-s390x-image = "manylinux_2_28"
+manylinux-pypy_x86_64-image = "manylinux_2_28"
 manylinux-pypy_aarch64-image = "manylinux_2_28"
-manylinux-pypy_i686-image = "manylinux_2_28"
 
 test-extras = ["dev"]
 before-build = "python -m pip install -U pip && rm -rf {project}/build"
 test-command = ["pytest {project}/tests"]
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py311"
 
 [tool.ruff.lint]
 extend-select = [

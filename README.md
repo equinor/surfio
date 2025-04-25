@@ -2,7 +2,6 @@
 
 Surfio is a library for reading and writing surface files. Currently only supports the irap format.
 
-
 ## Installation
 
 ```bash
@@ -26,11 +25,10 @@ print(surface.values.shape) # (10, 11)
 
 ```python
 with open("./file.irap") as f:
-    surface = surfio.IrapSurface.import_ascii_file(f.read())
+    surface = surfio.IrapSurface.import_ascii(f.read())
 ```
 
 but is more performant.
-
 
 Exporting irap surfaces can be done with
 
@@ -60,7 +58,6 @@ which is equivalent to:
 with open("./file.irap", mode="w") as f:
     f.write(surface.export_ascii())
 ```
-
 
 ## Development
 
