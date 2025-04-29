@@ -46,7 +46,7 @@ set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/lib")
 add_library(surfio_lib STATIC)
 target_sources(
   surfio_lib
-  PRIVATE ${SRC_PATH}/mmap_helper/mmap_helper.cpp
+  PRIVATE ${SRC_PATH}/mmap_wrapper/mmap_wrapper.cpp
           ${SRC_PATH}/irap_import_ascii.cpp ${SRC_PATH}/irap_import_binary.cpp
           ${SRC_PATH}/irap_export_ascii.cpp ${SRC_PATH}/irap_export_binary.cpp)
 target_link_libraries(surfio_lib INTERFACE mdspan)
