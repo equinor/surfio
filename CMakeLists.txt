@@ -28,8 +28,8 @@ FetchContent_Declare(
   GIT_TAG 8b6b7d878c89e81614d05edca7936de41ccdd2da)
 FetchContent_MakeAvailable(mio)
 
-find_package(Python 3.9 REQUIRED COMPONENTS Development.Module Interpreter
-                                            NumPy)
+find_package(Python 3.11 REQUIRED COMPONENTS Development.Module Interpreter
+                                             NumPy)
 cmake_policy(SET CMP0167 NEW)
 
 # surfio_lib
