@@ -1,4 +1,4 @@
-#include "mmap_helper.h"
+#include "mmap_wrapper.h"
 #include "mio.hpp"
 #include <format>
 #include <stdexcept>
@@ -10,16 +10,12 @@ struct internals {
 mmap_file::mmap_file(const std::string& filename) {
   std::error_code ec;
   auto handle = mio::make_mmap_source(filename, ec);
-  if (ec) {
+  if (ec)
     throw std::runtime_error(
         std::format(
             "failed to map file :{}, with error: {}", filename, ec.message()
         )
     );
-  }
-
-  if (handle.begin() == handle.end())
-    throw std::length_error(std::format("file is empty: {}", filename));
 
   d = std::make_unique<internals>(std::move(handle));
 }
