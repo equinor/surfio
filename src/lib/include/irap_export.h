@@ -18,8 +18,7 @@ constexpr size_t MAX_PER_LINE = 9; // Maximum accepted by some software
 // it easier to use simd to import the values
 constexpr size_t PER_LINE_BINARY = 8;
 
-using surf_span =
-    mdspan<const float, extents<size_t, dynamic_extent, dynamic_extent>>;
+using surf_span = mdspan<const float, extents<size_t, dynamic_extent, dynamic_extent>>;
 
 void write_header_ascii(const irap_header& header, std::ostream& out);
 void write_values_ascii(surf_span values, std::ostream& out);
@@ -31,8 +30,7 @@ void export_irap_to_ascii_file(
 );
 void export_irap_to_ascii_file(const std::string& filename, const irap& data);
 
-std::string
-export_irap_to_ascii_string(const irap_header& header, surf_span values);
+std::string export_irap_to_ascii_string(const irap_header& header, surf_span values);
 std::string export_irap_to_ascii_string(const irap& data);
 
 void export_irap_to_binary_file(
@@ -40,6 +38,5 @@ void export_irap_to_binary_file(
 );
 void export_irap_to_binary_file(const std::string& filename, const irap& data);
 
-std::string
-export_irap_to_binary_string(const irap_header& header, surf_span values);
+std::string export_irap_to_binary_string(const irap_header& header, surf_span values);
 std::string export_irap_to_binary_string(const irap& data);

@@ -16,9 +16,7 @@ template <typename T> T swap_byte_order(const T& value) {
 }
 
 // convert from Fortran order to C order (column major to row major order)
-inline size_t column_major_to_row_major_index(
-    size_t f_order, size_t row_size, size_t column_size
-) {
+inline size_t column_major_to_row_major_index(size_t f_order, size_t row_size, size_t column_size) {
   return f_order / row_size + (f_order % row_size) * column_size;
 }
 
@@ -35,8 +33,7 @@ const char* read_32bit_value(const char* begin, const char* end, T& value) {
   return begin + 4;
 }
 
-std::tuple<irap_header, const char*>
-get_header_binary(std::span<const char> buffer) {
+std::tuple<irap_header, const char*> get_header_binary(std::span<const char> buffer) {
   // header is 100 bytes. 6 chunk guards (24 bytes), 19 values (76 bytes)
   if (buffer.size() < 100)
     throw std::length_error("Header must be at least 100 bytes long");
@@ -53,9 +50,7 @@ get_header_binary(std::span<const char> buffer) {
     ptr = read_32bit_value(ptr, end, dummy);
     if (dummy != irap_header::id)
       throw std::domain_error(
-          std::format(
-              "First value in file should be {}, got {}", irap_header::id, dummy
-          )
+          std::format("First value in file should be {}, got {}", irap_header::id, dummy)
       );
     ptr = read_32bit_value(ptr, end, header.ny);
     ptr = read_32bit_value(ptr, end, header.xori);
@@ -91,15 +86,12 @@ get_header_binary(std::span<const char> buffer) {
     if (chunk_size != 28)
       throw std::domain_error("Chunk size mismatch");
   } catch (const std::exception& e) {
-    throw std::domain_error(
-        std::format("Failed to read irap headers: {}", e.what())
-    );
+    throw std::domain_error(std::format("Failed to read irap headers: {}", e.what()));
   }
   return {header, ptr};
 }
 
-std::vector<float>
-get_values_binary(const char* start, const char* end, int nx, int ny) {
+std::vector<float> get_values_binary(const char* start, const char* end, int nx, int ny) {
   const size_t nvalues = nx * ny;
   auto values = std::vector<float>(nvalues);
   auto ptr = start;
