@@ -12,9 +12,7 @@ irap_python* make_irap_python(const irap& data) {
   constexpr auto size = sizeof(decltype(irap::values)::value_type);
   return new irap_python{
       data.header,
-      {{data.header.nx, data.header.ny},
-       {size * data.header.ny, size},
-       data.values.data()}
+      {{data.header.nx, data.header.ny}, {size * data.header.ny, size}, data.values.data()}
   };
 }
 
@@ -26,11 +24,10 @@ PYBIND11_MODULE(surfio, m) {
   py::class_<irap_header>(m, "IrapHeader")
       .def(
           py::init<
-              int, double, double, double, double, double, double, int, double,
-              double, double>(),
-          py::arg("ny"), py::arg("xori"), py::arg("xmax"), py::arg("yori"),
-          py::arg("ymax"), py::arg("xinc"), py::arg("yinc"), py::arg("nx"),
-          py::arg("rot"), py::arg("xrot"), py::arg("yrot")
+              int, double, double, double, double, double, double, int, double, double, double>(),
+          py::arg("ny"), py::arg("xori"), py::arg("xmax"), py::arg("yori"), py::arg("ymax"),
+          py::arg("xinc"), py::arg("yinc"), py::arg("nx"), py::arg("rot"), py::arg("xrot"),
+          py::arg("yrot")
       )
       .def(py::self == py::self)
       .def(py::self != py::self)
@@ -48,10 +45,7 @@ PYBIND11_MODULE(surfio, m) {
       .def_readwrite("ny", &irap_header::ny);
 
   py::class_<irap_python>(m, "IrapSurface")
-      .def(
-          py::init<irap_header, py::array_t<float>>(), py::arg("header"),
-          py::arg("values")
-      )
+      .def(py::init<irap_header, py::array_t<float>>(), py::arg("header"), py::arg("values"))
       .def(
           "__repr__",
           [](const irap_python& ip) {
@@ -59,9 +53,9 @@ PYBIND11_MODULE(surfio, m) {
                 "<IrapSurface(nx={}, ny={}, xory={}, yori={}, "
                 "xinc={}, yinc={}, xmax={}, ymax={}, rot={}, "
                 "xrot={}, yrot={})>",
-                ip.header.nx, ip.header.ny, ip.header.xori, ip.header.yori,
-                ip.header.xinc, ip.header.yinc, ip.header.xmax, ip.header.ymax,
-                ip.header.rot, ip.header.xrot, ip.header.yrot
+                ip.header.nx, ip.header.ny, ip.header.xori, ip.header.yori, ip.header.xinc,
+                ip.header.yinc, ip.header.xmax, ip.header.ymax, ip.header.rot, ip.header.xrot,
+                ip.header.yrot
             );
           }
       )
@@ -100,8 +94,7 @@ PYBIND11_MODULE(surfio, m) {
       .def_static(
           "import_binary",
           [](const py::bytes& buffer) -> irap_python* {
-            auto irap =
-                import_irap_binary_from_buffer(std::string_view(buffer));
+            auto irap = import_irap_binary_from_buffer(std::string_view(buffer));
             // lock the GIL before creating the numpy array
             py::gil_scoped_acquire acquire;
             return make_irap_python(irap);
@@ -123,15 +116,11 @@ PYBIND11_MODULE(surfio, m) {
       .def(
           "export_binary",
           [](const irap_python& ip) -> py::bytes {
-            auto buffer =
-                export_irap_to_binary_string(ip.header, make_surf_span(ip));
+            auto buffer = export_irap_to_binary_string(ip.header, make_surf_span(ip));
             return py::bytes(buffer);
           }
       )
-      .def(
-          "export_binary_file",
-          [](const irap_python& ip, const std::string& filename) -> void {
-            export_irap_to_binary_file(filename, ip.header, make_surf_span(ip));
-          }
-      );
+      .def("export_binary_file", [](const irap_python& ip, const std::string& filename) -> void {
+        export_irap_to_binary_file(filename, ip.header, make_surf_span(ip));
+      });
 }

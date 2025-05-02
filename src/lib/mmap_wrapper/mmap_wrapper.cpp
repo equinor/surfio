@@ -12,9 +12,7 @@ mmap_file::mmap_file(const std::string& filename) {
   auto handle = mio::make_mmap_source(filename, ec);
   if (ec)
     throw std::runtime_error(
-        std::format(
-            "failed to map file :{}, with error: {}", filename, ec.message()
-        )
+        std::format("failed to map file :{}, with error: {}", filename, ec.message())
     );
 
   d = std::make_unique<internals>(std::move(handle));

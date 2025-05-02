@@ -82,13 +82,11 @@ void export_irap_to_binary_file(
 
 void export_irap_to_binary_file(const std::string& filename, const irap& data) {
   export_irap_to_binary_file(
-      filename, data.header,
-      surf_span{data.values.data(), data.header.nx, data.header.ny}
+      filename, data.header, surf_span{data.values.data(), data.header.nx, data.header.ny}
   );
 }
 
-std::string
-export_irap_to_binary_string(const irap_header& header, surf_span values) {
+std::string export_irap_to_binary_string(const irap_header& header, surf_span values) {
   std::ostringstream out;
   write_header_binary(header, out);
   write_values_binary(values, out);

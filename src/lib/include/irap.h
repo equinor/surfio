@@ -33,5 +33,4 @@ template <typename T>
 concept IsLittleEndian = std::endian::native == std::endian::little;
 template <typename T>
 concept IsLittleEndianNumeric =
-    (std::integral<std::decay_t<T>> || std::floating_point<std::decay_t<T>>) &&
-    IsLittleEndian<T>;
+    (std::integral<std::decay_t<T>> || std::floating_point<std::decay_t<T>>) && IsLittleEndian<T>;
