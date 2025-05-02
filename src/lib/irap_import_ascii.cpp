@@ -8,11 +8,6 @@ auto locale = std::locale("C");
 auto& facet = std::use_facet<std::ctype<char>>(locale);
 auto is_space = [](char ch) { return facet.is(std::ctype_base::space, ch); };
 
-// convert from Fortran order to C order (column major to row major order)
-inline size_t column_major_to_row_major_index(size_t f_order, size_t row_size, size_t column_size) {
-  return f_order / row_size + (f_order % row_size) * column_size;
-}
-
 template <typename T, typename... U>
 const char* read_headers(const char* start, const char* end, T& arg, U&... args) {
   start = std::find_if_not(start, end, is_space);

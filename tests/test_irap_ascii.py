@@ -22,8 +22,8 @@ def test_irap_surface_string_representation(func):
         values=np.zeros((3, 2)),
     )
     assert (
-        func(surface) == "<IrapSurface(nx=3, ny=2, xory=0, yori=0,"
-        " xinc=2, yinc=2, xmax=2, ymax=2, rot=0, xrot=0, yrot=0)>"
+        func(surface) == "<IrapSurface(header=IrapHeader(nx=3, ny=2, xory=0, yori=0,"
+        " xinc=2, yinc=2, xmax=2, ymax=2, rot=0, xrot=0, yrot=0), values=...)>"
     )
 
 
