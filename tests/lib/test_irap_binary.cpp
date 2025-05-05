@@ -8,19 +8,19 @@
 
 SCENARIO("Verify that surfio can read and write irap binary files", "[test_irap_binary.cpp]") {
   auto _header = irap_header{
-      .ny = 6000,
+      .nrow = 6000,
       .xori = 0.,
       .xmax = 0,
       .yori = 0.,
       .ymax = 0.,
       .xinc = 0,
       .yinc = 0.,
-      .nx = 6000,
+      .ncol = 6000,
       .rot = 0.,
       .xrot = 0.,
       .yrot = 0.
   };
-  auto _values = std::vector<float>(_header.nx * _header.ny);
+  auto _values = std::vector<float>(_header.ncol * _header.nrow);
   std::mt19937 g;
   std::uniform_real_distribution<> u;
   std::generate(_values.begin(), _values.end(), [&]() { return u(g); });
