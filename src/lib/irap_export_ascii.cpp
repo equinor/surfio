@@ -13,9 +13,9 @@ static auto UNDEF_MAP_IRAP_STRING = std::format("{:f}", UNDEF_MAP_IRAP);
 
 void write_header_ascii(const irap_header& header, std::ostream& out) {
   out << std::setprecision(6) << std::fixed << std::showpoint;
-  out << id << header.ny << " " << header.xinc << " " << header.yinc << "\n";
+  out << id << header.nrow << " " << header.xinc << " " << header.yinc << "\n";
   out << header.xori << " " << header.xmax << " " << header.yori << " " << header.ymax << "\n";
-  out << header.nx << " " << header.rot << " " << header.xrot << " " << header.yrot << "\n";
+  out << header.ncol << " " << header.rot << " " << header.xrot << " " << header.yrot << "\n";
   out << "0 0 0 0 0 0 0\n";
 }
 
@@ -45,7 +45,7 @@ void export_irap_to_ascii_file(
 
 void export_irap_to_ascii_file(const std::string& filename, const irap& data) {
   export_irap_to_ascii_file(
-      filename, data.header, surf_span{data.values.data(), data.header.nx, data.header.ny}
+      filename, data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }
 
@@ -58,6 +58,6 @@ std::string export_irap_to_ascii_string(const irap_header& header, surf_span val
 
 std::string export_irap_to_ascii_string(const irap& data) {
   return export_irap_to_ascii_string(
-      data.header, surf_span{data.values.data(), data.header.nx, data.header.ny}
+      data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }

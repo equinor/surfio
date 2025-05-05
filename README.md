@@ -17,7 +17,7 @@ import surfio
 
 
 surface = surfio.IrapSurface.import_ascii_file("./file.irap")
-print(surface.header.nx, surface.header.ny) # 10, 11
+print(surface.header.ncol, surface.header.nrow) # 10, 11
 print(surface.values.shape) # (10, 11)
 ```
 
@@ -35,8 +35,8 @@ Exporting irap surfaces can be done with
 ```python
     surface = surfio.IrapSurface(
         surfio.IrapHeader(
-            nx=3,
-            ny=2,
+            ncol=3,
+            nrow=2,
             xori=0.0,
             yori=0.0,
             xinc=2.0,

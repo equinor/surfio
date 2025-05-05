@@ -7,8 +7,8 @@ import surfio
 def test_irap_surface_string_representation(func):
     surface = surfio.IrapSurface(
         surfio.IrapHeader(
-            nx=3,
-            ny=2,
+            ncol=3,
+            nrow=2,
             xori=0.0,
             yori=0.0,
             xinc=2.0,
@@ -22,7 +22,8 @@ def test_irap_surface_string_representation(func):
         values=np.zeros((3, 2)),
     )
     assert (
-        func(surface) == "<IrapSurface(header=IrapHeader(nx=3, ny=2, xory=0, yori=0,"
+        func(surface)
+        == "<IrapSurface(header=IrapHeader(ncol=3, nrow=2, xory=0, yori=0,"
         " xinc=2, yinc=2, xmax=2, ymax=2, rot=0, xrot=0, yrot=0), values=...)>"
     )
 
@@ -177,8 +178,8 @@ def test_header_can_have_high_precision():
 def test_import_and_export_are_inverse():
     surface = surfio.IrapSurface(
         surfio.IrapHeader(
-            nx=3,
-            ny=2,
+            ncol=3,
+            nrow=2,
             xori=0.0,
             yori=0.0,
             xinc=2.0,
@@ -200,8 +201,8 @@ def test_import_and_export_file_are_inverse(tmp_path):
     irap_path = tmp_path / "test.irap"
     surface = surfio.IrapSurface(
         surfio.IrapHeader(
-            nx=3,
-            ny=2,
+            ncol=3,
+            nrow=2,
             xori=0.0,
             yori=0.0,
             xinc=2.0,
@@ -223,8 +224,8 @@ def test_import_and_export_file_are_inverse(tmp_path):
 def test_exporting_nan_maps_to_9999900():
     surface = surfio.IrapSurface(
         surfio.IrapHeader(
-            nx=1,
-            ny=1,
+            ncol=1,
+            nrow=1,
             xori=0.0,
             yori=0.0,
             xinc=2.0,
@@ -247,8 +248,8 @@ def test_exporting_produces_max_9_values_per_line():
     """
     surface = surfio.IrapSurface(
         surfio.IrapHeader(
-            nx=10,
-            ny=1,
+            ncol=10,
+            nrow=1,
             xori=0.0,
             yori=0.0,
             xinc=2.0,

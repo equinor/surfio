@@ -5,14 +5,14 @@ constexpr float UNDEF_MAP_IRAP = 9999900.0000;
 
 struct irap_header {
   static constexpr int id = -996;
-  int ny;
+  int nrow;
   double xori;
   double xmax;
   double yori;
   double ymax;
   double xinc;
   double yinc;
-  int nx;
+  int ncol;
   double rot;
   double xrot;
   double yrot;

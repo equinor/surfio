@@ -12,7 +12,7 @@ irap_python* make_irap_python(const irap& data) {
   constexpr auto size = sizeof(decltype(irap::values)::value_type);
   return new irap_python{
       data.header,
-      {{data.header.nx, data.header.ny}, {size * data.header.ny, size}, data.values.data()}
+      {{data.header.ncol, data.header.nrow}, {size * data.header.nrow, size}, data.values.data()}
   };
 }
 
@@ -25,17 +25,17 @@ PYBIND11_MODULE(surfio, m) {
       .def(
           py::init<
               int, double, double, double, double, double, double, int, double, double, double>(),
-          py::arg("ny"), py::arg("xori"), py::arg("xmax"), py::arg("yori"), py::arg("ymax"),
-          py::arg("xinc"), py::arg("yinc"), py::arg("nx"), py::arg("rot"), py::arg("xrot"),
+          py::arg("nrow"), py::arg("xori"), py::arg("xmax"), py::arg("yori"), py::arg("ymax"),
+          py::arg("xinc"), py::arg("yinc"), py::arg("ncol"), py::arg("rot"), py::arg("xrot"),
           py::arg("yrot")
       )
       .def(
           "__repr__",
           [](const irap_header& header) {
             return std::format(
-                "<IrapHeader(nx={}, ny={}, xory={}, yori={}, xinc={}, yinc={}, xmax={}, ymax={}, "
-                "rot={}, xrot={}, yrot={})>",
-                header.nx, header.ny, header.xori, header.yori, header.xinc, header.yinc,
+                "<IrapHeader(ncol={}, nrow={}, xory={}, yori={}, xinc={}, yinc={}, xmax={}, "
+                "ymax={}, rot={}, xrot={}, yrot={})>",
+                header.ncol, header.nrow, header.xori, header.yori, header.xinc, header.yinc,
                 header.xmax, header.ymax, header.rot, header.xrot, header.yrot
             );
           }
@@ -52,8 +52,8 @@ PYBIND11_MODULE(surfio, m) {
       .def_readwrite("ymax", &irap_header::ymax)
       .def_readwrite("xrot", &irap_header::xrot)
       .def_readwrite("yrot", &irap_header::yrot)
-      .def_readwrite("nx", &irap_header::nx)
-      .def_readwrite("ny", &irap_header::ny);
+      .def_readwrite("ncol", &irap_header::ncol)
+      .def_readwrite("nrow", &irap_header::nrow);
 
   py::class_<irap_python>(m, "IrapSurface")
       .def(py::init<irap_header, py::array_t<float>>(), py::arg("header"), py::arg("values"))
@@ -61,9 +61,9 @@ PYBIND11_MODULE(surfio, m) {
           "__repr__",
           [](const irap_python& ip) {
             return std::format(
-                "<IrapSurface(header=IrapHeader(nx={}, ny={}, xory={}, yori={}, xinc={}, yinc={}, "
-                "xmax={}, ymax={}, rot={}, xrot={}, yrot={}), values=...)>",
-                ip.header.nx, ip.header.ny, ip.header.xori, ip.header.yori, ip.header.xinc,
+                "<IrapSurface(header=IrapHeader(ncol={}, nrow={}, xory={}, yori={}, xinc={}, "
+                "yinc={}, xmax={}, ymax={}, rot={}, xrot={}, yrot={}), values=...)>",
+                ip.header.ncol, ip.header.nrow, ip.header.xori, ip.header.yori, ip.header.xinc,
                 ip.header.yinc, ip.header.xmax, ip.header.ymax, ip.header.rot, ip.header.xrot,
                 ip.header.yrot
             );
