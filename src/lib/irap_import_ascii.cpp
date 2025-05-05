@@ -26,8 +26,8 @@ std::tuple<irap_header, const char*> get_header(const char* start, const char* e
   int idum;
   irap_header head;
   auto ptr = read_headers(
-      start, end, magic_header, head.ny, head.xinc, head.yinc, head.xori, head.xmax, head.yori,
-      head.ymax, head.nx, head.rot, head.xrot, head.yrot, idum, idum, idum, idum, idum, idum, idum
+      start, end, magic_header, head.nrow, head.xinc, head.yinc, head.xori, head.xmax, head.yori,
+      head.ymax, head.ncol, head.rot, head.xrot, head.yrot, idum, idum, idum, idum, idum, idum, idum
   );
   if (magic_header != irap_header::id)
     throw std::runtime_error(
@@ -41,14 +41,14 @@ std::tuple<irap_header, const char*> get_header(const char* start, const char* e
   if (head.rot < 0.0)
     head.rot += 360.0;
 
-  if (head.nx < 0 || head.ny < 0)
+  if (head.ncol < 0 || head.nrow < 0)
     throw std::domain_error("Incorrect dimensions encountered while importing Irap ASCII");
 
   return {head, ptr};
 }
 
-std::vector<float> get_values(const char* start, const char* end, int nx, int ny) {
-  const size_t nvalues = nx * ny;
+std::vector<float> get_values(const char* start, const char* end, int ncol, int nrow) {
+  const size_t nvalues = ncol * nrow;
   auto values = std::vector<float>(nvalues);
   for (auto i = 0u; i < nvalues; ++i) {
     float value;
@@ -71,7 +71,7 @@ std::vector<float> get_values(const char* start, const char* end, int nx, int ny
     if (value == UNDEF_MAP_IRAP)
       value = std::numeric_limits<float>::quiet_NaN();
 
-    auto ic = column_major_to_row_major_index(i, nx, ny);
+    auto ic = column_major_to_row_major_index(i, ncol, nrow);
     values[ic] = value;
   }
 
@@ -82,7 +82,7 @@ irap import_irap_ascii(std::string path) {
   auto buffer = mmap_file(path);
 
   auto [head, ptr] = get_header(buffer.begin(), buffer.end());
-  auto values = get_values(ptr, buffer.end(), head.nx, head.ny);
+  auto values = get_values(ptr, buffer.end(), head.ncol, head.nrow);
 
   return {.header = std::move(head), .values = std::move(values)};
 }
@@ -91,7 +91,7 @@ irap import_irap_ascii_from_string(const std::string& buffer) {
   auto buffer_begin = buffer.c_str();
   auto buffer_end = buffer_begin + buffer.size();
   auto [head, ptr] = get_header(buffer_begin, buffer_end);
-  auto values = get_values(ptr, buffer_end, head.nx, head.ny);
+  auto values = get_values(ptr, buffer_end, head.ncol, head.nrow);
 
   return {.header = std::move(head), .values = std::move(values)};
 }

@@ -10,8 +10,8 @@ import xtgeo
 def compare_xtgeo_surface_with_surfio_header(
     xtgeo_surface: xtgeo.RegularSurface, surfio_header: surfio.IrapHeader
 ):
-    assert xtgeo_surface.ncol == surfio_header.nx
-    assert xtgeo_surface.nrow == surfio_header.ny
+    assert xtgeo_surface.ncol == surfio_header.ncol
+    assert xtgeo_surface.nrow == surfio_header.nrow
     assert xtgeo_surface.xori == surfio_header.xori
     assert xtgeo_surface.yori == surfio_header.yori
     assert xtgeo_surface.xinc == surfio_header.xinc
@@ -54,8 +54,8 @@ def test_binary_xtgeo_is_imported_correctly_in_surfio():
 def test_surfio_can_import_data_exported_from_surfio():
     srf = surfio.IrapSurface(
         surfio.IrapHeader(
-            nx=3,
-            ny=2,
+            ncol=3,
+            nrow=2,
             xori=0.0,
             yori=0.0,
             xinc=1.0,
@@ -78,8 +78,8 @@ def test_surfio_can_import_data_exported_from_surfio():
 def test_xtgeo_can_import_data_exported_from_surfio(tmp_path):
     srf = surfio.IrapSurface(
         surfio.IrapHeader(
-            nx=3,
-            ny=2,
+            ncol=3,
+            nrow=2,
             xori=0.0,
             yori=0.0,
             xinc=1.0,
@@ -102,8 +102,8 @@ def test_xtgeo_can_import_data_exported_from_surfio(tmp_path):
 def test_exporting_nan_maps_to_9999900():
     surface = surfio.IrapSurface(
         surfio.IrapHeader(
-            nx=1,
-            ny=1,
+            ncol=1,
+            nrow=1,
             xori=0.0,
             yori=0.0,
             xinc=2.0,

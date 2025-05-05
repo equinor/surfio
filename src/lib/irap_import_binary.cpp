@@ -64,14 +64,14 @@ std::tuple<irap_header, const char*> get_header_binary(std::span<const char> buf
   auto end = &*buffer.end();
   try {
     ptr = read_chunk(
-        ptr, end, dummy, header.ny, header.xori, header.xmax, header.yori, header.ymax, header.xinc,
-        header.yinc
+        ptr, end, dummy, header.nrow, header.xori, header.xmax, header.yori, header.ymax,
+        header.xinc, header.yinc
     );
     if (dummy != irap_header::id)
       std::domain_error(
           std::format("Incorrect magic number: {}. Expected {}", dummy, irap_header::id)
       );
-    ptr = read_chunk(ptr, end, header.nx, header.rot, header.xrot, header.yrot);
+    ptr = read_chunk(ptr, end, header.ncol, header.rot, header.xrot, header.yrot);
     ptr = read_chunk(ptr, end, fdummy, fdummy, dummy, dummy, dummy, dummy, dummy);
   } catch (const std::exception& e) {
     throw std::domain_error(std::format("Failed to read irap headers: {}", e.what()));
@@ -80,8 +80,8 @@ std::tuple<irap_header, const char*> get_header_binary(std::span<const char> buf
   return {header, ptr};
 }
 
-std::vector<float> get_values_binary(const char* start, const char* end, int nx, int ny) {
-  const size_t nvalues = nx * ny;
+std::vector<float> get_values_binary(const char* start, const char* end, int ncol, int nrow) {
+  const size_t nvalues = ncol * nrow;
   auto values = std::vector<float>(nvalues);
   auto ptr = start;
 
@@ -94,7 +94,7 @@ std::vector<float> get_values_binary(const char* start, const char* end, int nx,
     for (auto j = 0u; j < values_left; ++j, ++i) {
       float value;
       ptr = read_32bit_value(ptr, end, value);
-      auto ic = column_major_to_row_major_index(i, nx, ny);
+      auto ic = column_major_to_row_major_index(i, ncol, nrow);
       values[ic] = value;
     }
     ptr = read_and_check_value(ptr, end, chunk_size, "Block size mismatch");
@@ -106,7 +106,7 @@ std::vector<float> get_values_binary(const char* start, const char* end, int nx,
 irap import_irap_binary(std::string path) {
   auto buffer = mmap_file(path);
   auto [header, ptr] = get_header_binary(buffer);
-  auto values = get_values_binary(ptr, buffer.end(), header.nx, header.ny);
+  auto values = get_values_binary(ptr, buffer.end(), header.ncol, header.nrow);
 
   return {.header = header, .values = std::move(values)};
 }
@@ -114,7 +114,7 @@ irap import_irap_binary(std::string path) {
 irap import_irap_binary_from_buffer(std::span<const char> buffer) {
   auto buffer_end = &*buffer.begin() + buffer.size();
   auto [header, ptr] = get_header_binary(buffer);
-  auto values = get_values_binary(ptr, buffer_end, header.nx, header.ny);
+  auto values = get_values_binary(ptr, buffer_end, header.ncol, header.nrow);
 
   return {.header = header, .values = std::move(values)};
 }

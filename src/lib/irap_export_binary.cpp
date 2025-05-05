@@ -24,8 +24,8 @@ void write_32bit_binary_values(std::ostream& out, T&&... values) {
 
 void write_header_binary(const irap_header& header, std::ostream& out) {
   write_32bit_binary_values(
-      out, 32, irap_header::id, header.ny, header.xori, header.xmax, header.yori, header.ymax,
-      header.xinc, header.yinc, 32, 16, header.nx, header.rot, header.xrot, header.yrot, 16, 28,
+      out, 32, irap_header::id, header.nrow, header.xori, header.xmax, header.yori, header.ymax,
+      header.xinc, header.yinc, 32, 16, header.ncol, header.rot, header.xrot, header.yrot, 16, 28,
       0.f, 0.f, 0, 0, 0, 0, 0, 28
   );
 }
@@ -64,7 +64,7 @@ void export_irap_to_binary_file(
 
 void export_irap_to_binary_file(const std::string& filename, const irap& data) {
   export_irap_to_binary_file(
-      filename, data.header, surf_span{data.values.data(), data.header.nx, data.header.ny}
+      filename, data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }
 
@@ -77,6 +77,6 @@ std::string export_irap_to_binary_string(const irap_header& header, surf_span va
 
 std::string export_irap_to_binary_string(const irap& data) {
   return export_irap_to_binary_string(
-      data.header, surf_span{data.values.data(), data.header.nx, data.header.ny}
+      data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }
