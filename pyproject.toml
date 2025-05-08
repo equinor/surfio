@@ -56,7 +56,7 @@ testpaths = ["tests"]
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
-build-frontend = "build[uv]; args:--config-setting='--python-preference only-managed'"
+build-frontend = "build[uv]; args:--config-setting=--python-preference=only-managed"
 
 test-extras = ["dev"]
 before-build = "rm -rf {project}/build"

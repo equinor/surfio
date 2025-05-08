@@ -52,7 +52,9 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ matrix.python-version }}
-          activate-environment: true
+
+      - name: Activate venv
+        run: uv venv --python ${{ matrix.python-version }} --managed-python
 
       - name: sync
         run: uv sync
