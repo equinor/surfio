@@ -54,6 +54,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
 
+      - name: sync
+        run: uv sync
+
       - name: Install cibuildwheel
         run: uv pip install wheel cibuildwheel twine
 
