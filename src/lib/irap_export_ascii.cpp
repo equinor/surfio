@@ -9,6 +9,7 @@
 
 // All irap headers start with -996
 static const auto id = std::format("{} ", irap_header::id);
+static auto UNDEF_MAP_IRAP_STRING = std::format("{:f}", UNDEF_MAP_IRAP);
 
 void write_header_ascii(const irap_header& header, std::ostream& out) {
   out << std::setprecision(6) << std::fixed << std::showpoint;
@@ -26,7 +27,7 @@ void write_values_ascii(surf_span values, std::ostream& out) {
   for (size_t j = 0; j < cols; j++) {
     for (size_t i = 0; i < rows; i++) {
       auto v = values(i, j);
-      out << (std::isnan(v) ? UNDEF_MAP_IRAP : v);
+      out << (std::isnan(v) ? UNDEF_MAP_IRAP_STRING : std::format("{:f}", v));
 
       ++values_on_current_line %= MAX_PER_LINE;
       out << (values_on_current_line ? " " : "\n");
