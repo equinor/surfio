@@ -27,6 +27,7 @@ jobs:
           - [macos-latest, macosx_arm64] # macos-latest is always arm64 going forward
     env:
       CIBW_BUILD: ${{ matrix.python[1] }}-${{ matrix.os_arch[1] }}
+      PYTHON_VERSION_CI: ${{ matrix.python[1] }}
 
     steps:
       - uses: actions/checkout@v4
@@ -54,7 +55,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Activate venv
-        run: uv venv --python ${{ matrix.python-version }} --managed-python
+        run: uv venv --python $PYTHON_VERSION_CI --managed-python
 
       - name: sync
         run: uv sync
