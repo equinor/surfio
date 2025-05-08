@@ -35,6 +35,20 @@
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
       }
+    },
+    {
+      "name": "profiling",
+      "inherits": "default",
+      "binaryDir": "build/profiling",
+      "cacheVariables": {
+        "CMAKE_EXE_LINKER_FLAGS": "-lprofiler",
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      },
+      "condition": {
+        "type": "notEquals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
     }
   ],
   "buildPresets": [
@@ -54,6 +68,15 @@
       "configurePreset": "release-windows",
       "condition": {
         "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "profiling",
+      "configurePreset": "profiling",
+      "condition": {
+        "type": "notEquals",
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
       }
