@@ -58,5 +58,17 @@
         "rhs": "Windows"
       }
     }
+  ],
+  "testPresets": [
+    {
+      "name": "test-posix",
+      "displayName": "Test All",
+      "configurePreset": "release-posix"
+    },
+    {
+      "name": "test-windows",
+      "displayName": "Test All",
+      "configurePreset": "release-windows"
+    }
   ]
 }
