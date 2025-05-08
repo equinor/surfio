@@ -56,11 +56,10 @@ testpaths = ["tests"]
 [tool.cibuildwheel]
 manylinux-x86_64-image = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_28"
-manylinux-pypy_x86_64-image = "manylinux_2_28"
-manylinux-pypy_aarch64-image = "manylinux_2_28"
+build-frontend = "build[uv]"
 
 test-extras = ["dev"]
-before-build = "python -m pip install -U pip && rm -rf {project}/build"
+before-build = "rm -rf {project}/build"
 test-command = ["pytest {project}/tests"]
 
 [tool.ruff]
@@ -74,3 +73,6 @@ extend-select = [
   "RUF", # Ruff-specific
   "UP",  # pyupgrade
 ]
+
+[tool.uv]
+fork-strategy = "requires-python"
