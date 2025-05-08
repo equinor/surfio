@@ -34,11 +34,6 @@ jobs:
           fetch-depth: 0
           submodules: True
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python[0] }}
-
       - name: Set up gcc-14
         if: ${{ contains(runner.os, 'macos') }}
         run: |
@@ -54,16 +49,10 @@ jobs:
         run: echo "MACOSX_DEPLOYMENT_TARGET=14.0" >> $GITHUB_ENV
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v6
         with:
-          enable-cache: true
           python-version: ${{ matrix.python-version }}
-
-      - name: Create venv
-        run: uv venv
-
-      - name: Sync dependencies
-        run: uv sync
+          activate-environment: true
 
       - name: Install cibuildwheel
         run: uv pip install wheel cibuildwheel twine
