@@ -1,13 +1,15 @@
-#include "irap.h"
+#include "helpers/helper.h"
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_all.hpp>
 #include <irap.h>
 #include <irap_export.h>
 #include <irap_import.h>
-#include <random>
+
+using namespace Catch;
 
 SCENARIO("Verify that surfio can read and write irap binary files", "[test_irap_binary.cpp]") {
-  auto _header = irap_header{
+  auto header = irap_header{
       .nrow = 6000,
       .xori = 0.,
       .xmax = 0,
@@ -20,17 +22,11 @@ SCENARIO("Verify that surfio can read and write irap binary files", "[test_irap_
       .xrot = 0.,
       .yrot = 0.
   };
-  auto _values = std::vector<float>(_header.ncol * _header.nrow);
-  std::mt19937 g;
-  std::uniform_real_distribution<> u;
-  std::generate(_values.begin(), _values.end(), [&]() { return u(g); });
+  auto values = create_random_values(header.ncol * header.nrow);
+  auto original = irap{.header = header, .values = values};
+  export_irap_to_binary_file("surf.irap", original);
+  auto imported = import_irap_binary("surf.irap");
 
-  auto _original = irap{.header = _header, .values = _values};
-  export_irap_to_binary_file("surf.irap", _original);
-  auto _imported = import_irap_binary("surf.irap");
-
-  CHECK(_imported.header == _original.header);
-  CHECK(std::ranges::equal(_imported.values, _original.values, [](auto lhs, auto rhs) {
-    return (lhs - rhs) < 0.01;
-  }));
+  CHECK(imported.header == original.header);
+  CHECK_THAT(imported.values, Matchers::Approx(original.values).margin(0.001));
 }
