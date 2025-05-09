@@ -86,5 +86,6 @@ add_executable(
 )
 
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain surfio_lib)
+include(CTest)
 include(Catch)
 catch_discover_tests(tests)
