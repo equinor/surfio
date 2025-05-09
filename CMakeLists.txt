@@ -80,7 +80,10 @@ target_link_libraries(surfio PRIVATE surfio_lib surfio-compile-options)
 
 # C++ tests
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/tests/lib")
-add_executable(tests ${SRC_PATH}/test_irap_ascii.cpp ${SRC_PATH}/test_irap_binary.cpp)
+add_executable(
+  tests ${SRC_PATH}/test_irap_ascii.cpp ${SRC_PATH}/test_irap_binary.cpp
+        ${SRC_PATH}/helpers/helper.cpp
+)
 
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain surfio_lib)
 include(Catch)
