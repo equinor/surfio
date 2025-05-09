@@ -70,3 +70,23 @@ Style is enforced via pre-commit:
 ```bash
 pre-commit install
 ```
+
+## C++ development
+
+To configure the project
+
+```bash
+cmake --preset release-posix
+```
+
+To build it
+
+```bash
+cmake --build --preset release-posix
+```
+
+To test it
+
+```bash
+ctest --preset release-posix
+```
