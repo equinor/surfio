@@ -10,17 +10,8 @@ using namespace Catch;
 
 SCENARIO("Verify that surfio can read and write irap binary files", "[test_irap_binary.cpp]") {
   auto header = irap_header{
-      .nrow = 6000,
-      .xori = 0.,
-      .xmax = 0,
-      .yori = 0.,
-      .ymax = 0.,
-      .xinc = 0,
-      .yinc = 0.,
       .ncol = 6000,
-      .rot = 0.,
-      .xrot = 0.,
-      .yrot = 0.
+      .nrow = 6000,
   };
   auto values = create_random_values(header.ncol * header.nrow);
   auto original = irap{.header = header, .values = values};
