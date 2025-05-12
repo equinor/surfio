@@ -39,7 +39,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
-find_package(Python 3.11 REQUIRED COMPONENTS Development.Module Interpreter NumPy)
+find_package(
+  Python 3.11 REQUIRED
+  COMPONENTS Development.Module Interpreter NumPy
+  OPTIONAL_COMPONENTS Development.Embed
+)
 cmake_policy(SET CMP0167 NEW)
 
 # compile options as a target
@@ -84,8 +88,11 @@ add_executable(
   tests ${SRC_PATH}/test_irap_ascii.cpp ${SRC_PATH}/test_irap_binary.cpp
         ${SRC_PATH}/helpers/helper.cpp
 )
-
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain surfio_lib)
+if(TARGET Python::Python)
+  target_sources(tests PRIVATE ${SRC_PATH}/test_irap_header.cpp)
+  target_link_libraries(tests PRIVATE pybind11::embed)
+endif()
 include(CTest)
 include(Catch)
 catch_discover_tests(tests)
