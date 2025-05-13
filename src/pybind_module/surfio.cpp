@@ -6,6 +6,7 @@
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl/filesystem.h>
+#include <string_view>
 
 namespace py = pybind11;
 
@@ -87,7 +88,7 @@ PYBIND11_MODULE(surfio, m) {
       )
       .def_static(
           "import_ascii",
-          [](const std::string& string) -> irap_python* {
+          [](std::string_view string) -> irap_python* {
             auto irap = import_irap_ascii_from_string(string);
             // lock the GIL before creating the numpy array
             py::gil_scoped_acquire acquire;
