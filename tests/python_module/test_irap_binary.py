@@ -53,19 +53,7 @@ def test_binary_xtgeo_is_imported_correctly_in_surfio():
 
 def test_surfio_can_import_data_exported_from_surfio():
     srf = surfio.IrapSurface(
-        surfio.IrapHeader(
-            ncol=3,
-            nrow=2,
-            xori=0.0,
-            yori=0.0,
-            xinc=1.0,
-            yinc=1.0,
-            xmax=8.0,
-            ymax=8.0,
-            rot=0.0,
-            xrot=0.0,
-            yrot=0.0,
-        ),
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=8.0, ymax=8.0),
         values=np.arange(6, dtype=np.float32).reshape((3, 2)),
     )
     buffer = srf.export_binary()
@@ -89,19 +77,7 @@ def test_surfio_can_export_values_in_fortran_order():
 
 def test_xtgeo_can_import_data_exported_from_surfio(tmp_path):
     srf = surfio.IrapSurface(
-        surfio.IrapHeader(
-            ncol=3,
-            nrow=2,
-            xori=0.0,
-            yori=0.0,
-            xinc=1.0,
-            yinc=1.0,
-            xmax=8.0,
-            ymax=8.0,
-            rot=0.0,
-            xrot=0.0,
-            yrot=0.0,
-        ),
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=8.0, ymax=8.0),
         values=np.arange(6, dtype=np.float32).reshape((3, 2)),
     )
     srf.export_binary_file(str(tmp_path / "test.irap"))
@@ -113,19 +89,7 @@ def test_xtgeo_can_import_data_exported_from_surfio(tmp_path):
 
 def test_exporting_nan_maps_to_9999900():
     surface = surfio.IrapSurface(
-        surfio.IrapHeader(
-            ncol=1,
-            nrow=1,
-            xori=0.0,
-            yori=0.0,
-            xinc=2.0,
-            yinc=2.0,
-            xmax=2.0,
-            ymax=2.0,
-            rot=0.0,
-            xrot=0.0,
-            yrot=0.0,
-        ),
+        surfio.IrapHeader(ncol=1, nrow=1, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0),
         values=np.array([[np.nan]], dtype=np.float32),
     )
 
