@@ -87,8 +87,8 @@ irap import_irap_ascii(std::string path) {
   return {.header = std::move(head), .values = std::move(values)};
 }
 
-irap import_irap_ascii_from_string(const std::string& buffer) {
-  auto buffer_begin = buffer.c_str();
+irap import_irap_ascii_from_string(std::string_view buffer) {
+  auto buffer_begin = buffer.data();
   auto buffer_end = buffer_begin + buffer.size();
   auto [head, ptr] = get_header(buffer_begin, buffer_end);
   auto values = get_values(ptr, buffer_end, head.ncol, head.nrow);
