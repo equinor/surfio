@@ -264,3 +264,15 @@ def test_exporting_produces_max_9_values_per_line():
     )
 
     assert all(len(line.split()) <= 9 for line in surface.export_ascii().splitlines())
+
+
+def test_surfio_can_export_values_in_fortran_order():
+    srf = surfio.IrapSurface(
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=8.0, ymax=8.0),
+        values=np.asfortranarray(np.arange(6, dtype=np.float32).reshape((3, 2))),
+    )
+    buffer = srf.export_ascii()
+    srf_imported = surfio.IrapSurface.import_ascii(buffer)
+
+    assert np.allclose(srf.values, srf_imported.values)
+    assert srf.header == srf_imported.header

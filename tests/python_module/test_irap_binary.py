@@ -75,6 +75,18 @@ def test_surfio_can_import_data_exported_from_surfio():
     assert srf.header == srf_imported.header
 
 
+def test_surfio_can_export_values_in_fortran_order():
+    srf = surfio.IrapSurface(
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=8.0, ymax=8.0),
+        values=np.asfortranarray(np.arange(6, dtype=np.float32).reshape((3, 2))),
+    )
+    buffer = srf.export_binary()
+    srf_imported = surfio.IrapSurface.import_binary(buffer)
+
+    assert np.allclose(srf.values, srf_imported.values)
+    assert srf.header == srf_imported.header
+
+
 def test_xtgeo_can_import_data_exported_from_surfio(tmp_path):
     srf = surfio.IrapSurface(
         surfio.IrapHeader(
