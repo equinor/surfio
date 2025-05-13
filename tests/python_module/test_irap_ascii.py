@@ -6,19 +6,7 @@ import surfio
 @pytest.mark.parametrize("func", [str, repr])
 def test_irap_surface_string_representation(func):
     surface = surfio.IrapSurface(
-        surfio.IrapHeader(
-            ncol=3,
-            nrow=2,
-            xori=0.0,
-            yori=0.0,
-            xinc=2.0,
-            yinc=2.0,
-            xmax=2.0,
-            ymax=2.0,
-            rot=0.0,
-            xrot=0.0,
-            yrot=0.0,
-        ),
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0),
         values=np.zeros((3, 2)),
     )
     assert (
@@ -177,19 +165,7 @@ def test_header_can_have_high_precision():
 
 def test_import_and_export_are_inverse():
     surface = surfio.IrapSurface(
-        surfio.IrapHeader(
-            ncol=3,
-            nrow=2,
-            xori=0.0,
-            yori=0.0,
-            xinc=2.0,
-            yinc=2.0,
-            xmax=2.0,
-            ymax=2.0,
-            rot=0.0,
-            xrot=0.0,
-            yrot=0.0,
-        ),
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0),
         values=np.arange(6, dtype=np.float32).reshape((3, 2)),
     )
     roundtrip = surfio.IrapSurface.import_ascii(surface.export_ascii())
@@ -200,19 +176,7 @@ def test_import_and_export_are_inverse():
 def test_import_and_export_file_are_inverse(tmp_path):
     irap_path = tmp_path / "test.irap"
     surface = surfio.IrapSurface(
-        surfio.IrapHeader(
-            ncol=3,
-            nrow=2,
-            xori=0.0,
-            yori=0.0,
-            xinc=2.0,
-            yinc=2.0,
-            xmax=2.0,
-            ymax=2.0,
-            rot=0.0,
-            xrot=0.0,
-            yrot=0.0,
-        ),
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0),
         values=np.arange(6, dtype=np.float32).reshape((3, 2)),
     )
     surface.export_ascii_file(str(irap_path))
@@ -223,19 +187,7 @@ def test_import_and_export_file_are_inverse(tmp_path):
 
 def test_exporting_nan_maps_to_9999900():
     surface = surfio.IrapSurface(
-        surfio.IrapHeader(
-            ncol=1,
-            nrow=1,
-            xori=0.0,
-            yori=0.0,
-            xinc=2.0,
-            yinc=2.0,
-            xmax=2.0,
-            ymax=2.0,
-            rot=0.0,
-            xrot=0.0,
-            yrot=0.0,
-        ),
+        surfio.IrapHeader(ncol=1, nrow=1, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0),
         values=np.array([[np.nan]], dtype=np.float32),
     )
 
@@ -247,19 +199,7 @@ def test_exporting_produces_max_9_values_per_line():
     This is the maximum supported by some applications
     """
     surface = surfio.IrapSurface(
-        surfio.IrapHeader(
-            ncol=10,
-            nrow=1,
-            xori=0.0,
-            yori=0.0,
-            xinc=2.0,
-            yinc=2.0,
-            xmax=2.0,
-            ymax=2.0,
-            rot=0.0,
-            xrot=0.0,
-            yrot=0.0,
-        ),
+        surfio.IrapHeader(ncol=10, nrow=1, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0),
         values=np.zeros((10, 1), dtype=np.float32),
     )
 
