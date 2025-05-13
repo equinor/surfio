@@ -27,12 +27,13 @@ classifiers = [
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
-dependencies = ["numpy"]
+dependencies = []
 
 [tool.setuptools_scm]
 
-[project.optional-dependencies]
-dev = ["pytest", "pre-commit", "pytest-snapshot", "xtgeo"]
+[dependency-groups]
+test = ["pytest", "xtgeo"]
+dev = ["pre-commit", { include-group = "test" }]
 
 [tool.mypy]
 files = "setup.py"
@@ -59,7 +60,7 @@ manylinux-aarch64-image = "manylinux_2_28"
 manylinux-pypy_x86_64-image = "manylinux_2_28"
 manylinux-pypy_aarch64-image = "manylinux_2_28"
 
-test-extras = ["dev"]
+test-groups = ["test"]
 before-build = "python -m pip install -U pip && rm -rf {project}/build"
 test-command = ["pytest {project}/tests"]
 

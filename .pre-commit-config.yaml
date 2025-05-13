@@ -35,8 +35,12 @@ repos:
       - id: pytest
         name: pytest
         entry: pytest
-        args: [tests]
+        args: [tests/python_module]
         language: system
         types: [python]
         stages: [pre-push]
         pass_filenames: false
+  - repo: https://github.com/fpgmaas/deptry.git
+    rev: "0.23.0"
+    hooks:
+      - id: deptry
