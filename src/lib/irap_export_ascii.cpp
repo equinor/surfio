@@ -1,11 +1,14 @@
 #include "include/irap.h"
 #include "include/irap_export.h"
 #include <cmath>
+#include <filesystem>
 #include <format>
 #include <fstream>
 #include <iomanip>
 #include <ostream>
 #include <sstream>
+
+namespace fs = std::filesystem;
 
 // All irap headers start with -996
 static const auto id = std::format("{} ", irap_header::id);
@@ -35,17 +38,15 @@ void write_values_ascii(surf_span values, std::ostream& out) {
   }
 }
 
-void export_irap_to_ascii_file(
-    const std::string& filename, const irap_header& header, surf_span values
-) {
-  std::ofstream out(filename);
+void export_irap_to_ascii_file(const fs::path& file, const irap_header& header, surf_span values) {
+  std::ofstream out(file);
   write_header_ascii(header, out);
   write_values_ascii(values, out);
 }
 
-void export_irap_to_ascii_file(const std::string& filename, const irap& data) {
+void export_irap_to_ascii_file(const fs::path& file, const irap& data) {
   export_irap_to_ascii_file(
-      filename, data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
+      file, data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }
 

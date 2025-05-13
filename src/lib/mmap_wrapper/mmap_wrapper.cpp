@@ -3,16 +3,18 @@
 #include <format>
 #include <stdexcept>
 
+namespace fs = std::filesystem;
+
 struct internals {
   mio::mmap_source handle;
 };
 
-mmap_file::mmap_file(const std::string& filename) {
+mmap_file::mmap_file(const fs::path& file) {
   std::error_code ec;
-  auto handle = mio::make_mmap_source(filename, ec);
+  auto handle = mio::make_mmap_source(file.string(), ec);
   if (ec)
     throw std::runtime_error(
-        std::format("failed to map file :{}, with error: {}", filename, ec.message())
+        std::format("failed to map file :{}, with error: {}", file.string(), ec.message())
     );
 
   d = std::make_unique<internals>(std::move(handle));
