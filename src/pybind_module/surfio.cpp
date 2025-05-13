@@ -57,7 +57,10 @@ PYBIND11_MODULE(surfio, m) {
       .def_readwrite("yrot", &irap_header::yrot);
 
   py::class_<irap_python>(m, "IrapSurface")
-      .def(py::init<irap_header, py::array_t<float>>(), py::arg("header"), py::arg("values"))
+      .def(
+          py::init<irap_header, py::array_t<float, py::array::c_style | py::array::forcecast>>(),
+          py::arg("header"), py::arg("values")
+      )
       .def(
           "__repr__",
           [](const irap_python& ip) {
