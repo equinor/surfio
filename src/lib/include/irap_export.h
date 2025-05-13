@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irap.h"
+#include <filesystem>
 #include <ostream>
 
 #if __cpp_lib_mdspan
@@ -28,17 +29,17 @@ void write_header_binary(const irap_header& header, std::ostream& out);
 void write_values_binary(surf_span values, std::ostream& out);
 
 void export_irap_to_ascii_file(
-    const std::string& filename, const irap_header& header, surf_span values
+    const std::filesystem::path& file, const irap_header& header, surf_span values
 );
-void export_irap_to_ascii_file(const std::string& filename, const irap& data);
+void export_irap_to_ascii_file(const std::filesystem::path& file, const irap& data);
 
 std::string export_irap_to_ascii_string(const irap_header& header, surf_span values);
 std::string export_irap_to_ascii_string(const irap& data);
 
 void export_irap_to_binary_file(
-    const std::string& filename, const irap_header& header, surf_span values
+    const std::filesystem::path& file, const irap_header& header, surf_span values
 );
-void export_irap_to_binary_file(const std::string& filename, const irap& data);
+void export_irap_to_binary_file(const std::filesystem::path& file, const irap& data);
 
 std::string export_irap_to_binary_string(const irap_header& header, surf_span values);
 std::string export_irap_to_binary_string(const irap& data);

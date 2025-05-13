@@ -5,9 +5,11 @@
 #include <bit>
 #include <cmath>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
-#include <memory>
 #include <sstream>
+
+namespace fs = std::filesystem;
 
 template <IsLittleEndianNumeric T> void write_32bit_binary_value(char*& bufptr, T&& value) {
   std::array<char, 4> tmp;
@@ -74,17 +76,15 @@ void write_values_binary(surf_span values, std::ostream& out) {
     out.write(buf, dist);
 }
 
-void export_irap_to_binary_file(
-    const std::string& filename, const irap_header& header, surf_span values
-) {
-  std::ofstream out(filename, std::ios::binary);
+void export_irap_to_binary_file(const fs::path& file, const irap_header& header, surf_span values) {
+  std::ofstream out(file, std::ios::binary);
   write_header_binary(header, out);
   write_values_binary(values, out);
 }
 
-void export_irap_to_binary_file(const std::string& filename, const irap& data) {
+void export_irap_to_binary_file(const fs::path& file, const irap& data) {
   export_irap_to_binary_file(
-      filename, data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
+      file, data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }
 

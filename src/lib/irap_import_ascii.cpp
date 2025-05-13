@@ -2,7 +2,10 @@
 #include "mmap_wrapper/mmap_wrapper.h"
 #include <algorithm>
 #include <charconv>
+#include <filesystem>
 #include <format>
+
+namespace fs = std::filesystem;
 
 auto locale = std::locale("C");
 auto& facet = std::use_facet<std::ctype<char>>(locale);
@@ -78,8 +81,8 @@ std::vector<float> get_values(const char* start, const char* end, int ncol, int 
   return values;
 }
 
-irap import_irap_ascii(std::string path) {
-  auto buffer = mmap_file(path);
+irap import_irap_ascii(const fs::path& file) {
+  auto buffer = mmap_file(file);
 
   auto [head, ptr] = get_header(buffer.begin(), buffer.end());
   auto values = get_values(ptr, buffer.end(), head.ncol, head.nrow);

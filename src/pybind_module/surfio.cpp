@@ -1,6 +1,7 @@
 #include "include/irap_pybind.h"
 #include "irap_export.h"
 #include "irap_import.h"
+#include <filesystem>
 #include <format>
 #include <pybind11/numpy.h>
 #include <pybind11/operators.h>
@@ -9,6 +10,7 @@
 #include <string_view>
 
 namespace py = pybind11;
+namespace fs = std::filesystem;
 
 irap_python* make_irap_python(const irap& data) {
   constexpr auto size = sizeof(decltype(irap::values)::value_type);
@@ -78,8 +80,8 @@ PYBIND11_MODULE(surfio, m) {
       .def_readwrite("values", &irap_python::values)
       .def_static(
           "import_ascii_file",
-          [](const std::string& path) -> irap_python* {
-            auto irap = import_irap_ascii(path);
+          [](fs::path file) -> irap_python* {
+            auto irap = import_irap_ascii(file);
             // lock the GIL before creating the numpy array
             py::gil_scoped_acquire acquire;
             return make_irap_python(irap);
@@ -98,8 +100,8 @@ PYBIND11_MODULE(surfio, m) {
       )
       .def_static(
           "import_binary_file",
-          [](const std::string& path) -> irap_python* {
-            auto irap = import_irap_binary(path);
+          [](fs::path file) -> irap_python* {
+            auto irap = import_irap_binary(file);
             // lock the GIL before creating the numpy array
             py::gil_scoped_acquire acquire;
             return make_irap_python(irap);
@@ -124,8 +126,8 @@ PYBIND11_MODULE(surfio, m) {
       )
       .def(
           "export_ascii_file",
-          [](const irap_python& ip, const std::string& filename) -> void {
-            export_irap_to_ascii_file(filename, ip.header, make_surf_span(ip));
+          [](const irap_python& ip, fs::path file) -> void {
+            export_irap_to_ascii_file(file, ip.header, make_surf_span(ip));
           }
       )
       .def(
@@ -135,7 +137,7 @@ PYBIND11_MODULE(surfio, m) {
             return py::bytes(buffer);
           }
       )
-      .def("export_binary_file", [](const irap_python& ip, const std::string& filename) -> void {
-        export_irap_to_binary_file(filename, ip.header, make_surf_span(ip));
+      .def("export_binary_file", [](const irap_python& ip, fs::path file) -> void {
+        export_irap_to_binary_file(file, ip.header, make_surf_span(ip));
       });
 }

@@ -11,7 +11,7 @@ using namespace Catch;
 namespace fs = std::filesystem;
 
 SCENARIO("Verify that surfio can read and write irap ascii files", "[test_irap_ascii.cpp]") {
-  const std::string filename("surf.irap");
+  fs::path filename("surf.irap");
   auto header = irap_header{
       .ncol = 6000,
       .nrow = 6000,

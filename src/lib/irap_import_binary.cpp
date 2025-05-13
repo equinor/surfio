@@ -5,10 +5,13 @@
 #include <array>
 #include <bit>
 #include <cstdint>
+#include <filesystem>
 #include <format>
 #include <ranges>
 #include <span>
 #include <stdexcept>
+
+namespace fs = std::filesystem;
 
 template <typename T> T swap_byte_order(const T& value) {
   auto tmp = std::bit_cast<std::array<std::byte, sizeof(T)>>(value);
@@ -103,8 +106,8 @@ std::vector<float> get_values_binary(const char* start, const char* end, int nco
   return values;
 }
 
-irap import_irap_binary(std::string path) {
-  auto buffer = mmap_file(path);
+irap import_irap_binary(const fs::path& file) {
+  auto buffer = mmap_file(file);
   auto [header, ptr] = get_header_binary(buffer);
   auto values = get_values_binary(ptr, buffer.end(), header.ncol, header.nrow);
 
