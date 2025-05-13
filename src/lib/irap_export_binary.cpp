@@ -22,12 +22,11 @@ template <IsLittleEndianNumeric T> void write_32bit_binary_value(char*& bufptr, 
 
 template <IsLittleEndianNumeric... T>
 void write_32bit_binary_values(std::ostream& out, T&&... values) {
-  constexpr size_t header_size = 100;
-  char buf[header_size];
+  constexpr size_t HEADER_SIZE = 100;
+  char buf[HEADER_SIZE];
   char* bufptr = buf;
   (write_32bit_binary_value(bufptr, std::forward<T>(values)), ...);
-  bufptr = buf;
-  out.write(bufptr, header_size);
+  out.write(buf, HEADER_SIZE);
 }
 
 void write_header_binary(const irap_header& header, std::ostream& out) {
@@ -43,15 +42,14 @@ void write_values_binary(surf_span values, std::ostream& out) {
   size_t chunk_length = 0;
   auto rows = values.extent(0);
   auto cols = values.extent(1);
-  auto len = values.size();
-  constexpr long line_size = (PER_LINE_BINARY + 2) * sizeof(float);
-  constexpr size_t buflen = line_size * 10;
-  char buf[buflen];
+  auto remaining = values.size();
+  constexpr long CHUNK_SIZE = (PER_LINE_BINARY + 2) * sizeof(float);
+  char buf[CHUNK_SIZE * 10];
   char* bufptr = buf;
   for (size_t j = 0; j < cols; j++) {
     for (size_t i = 0; i < rows; i++) {
       if (written_on_line == 0) {
-        chunk_length = std::min(len - (j * cols + i), PER_LINE_BINARY);
+        chunk_length = std::min(remaining, PER_LINE_BINARY);
         write_32bit_binary_value(bufptr, chunk_length * 4);
       }
 
@@ -63,10 +61,13 @@ void write_values_binary(surf_span values, std::ostream& out) {
         written_on_line = 0;
       }
 
-      if (auto dist = std::distance(buf, bufptr); buflen - dist < line_size) {
+      if (auto bytes_written = std::distance(buf, bufptr);
+          sizeof(buf) - bytes_written < CHUNK_SIZE) {
+        out.write(buf, bytes_written);
         bufptr = buf;
-        out.write(bufptr, dist);
       }
+
+      --remaining;
     }
   }
   if (auto dist = std::distance(buf, bufptr); dist)
