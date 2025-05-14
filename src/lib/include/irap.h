@@ -1,4 +1,5 @@
 #pragma once
+
 #include <bit>
 #include <vector>
 constexpr float UNDEF_MAP_IRAP = 9999900.0000;
