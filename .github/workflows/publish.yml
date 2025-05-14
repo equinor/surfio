@@ -2,6 +2,19 @@ name: Build & Publish
 
 on:
   workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+      python-shortname:
+        required: true
+        type: string
+      os:
+        required: true
+        type: string
+      arch:
+        required: true
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -9,11 +22,11 @@ concurrency:
 
 jobs:
   build:
-    name: Python ${{ inputs.python[0] }} on ${{ inputs.os_arch[0] }}-${{ inputs.os_arch[1] }}
-    runs-on: ${{ inputs.os_arch[0] }}
+    name: Python ${{ inputs.python-version }} on ${{ inputs.os }}-${{ inputs.arch }}
+    runs-on: ${{ inputs.os }}
     timeout-minutes: 15
     env:
-      CIBW_BUILD: ${{ inputs.python[1] }}-${{ inputs.os_arch[1] }}
+      CIBW_BUILD: ${{ inputs.python-shortname }}-${{ inputs.arch }}
 
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +37,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python[0] }}
+          python-version: ${{ inputs.python-version }}
 
       - name: Set up gcc-14
         if: ${{ contains(runner.os, 'macos') }}
