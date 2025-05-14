@@ -15,3 +15,6 @@ jobs:
           - [ubuntu-latest, manylinux_x86_64]
           - [windows-latest, win_amd64]
           - [macos-latest, macosx_arm64] # macos-latest is always arm64 going forward
+    with:
+      python: ${{matrix.python}}
+      os_arch: ${{matrix.os_arch}}
