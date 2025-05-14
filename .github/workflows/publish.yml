@@ -9,11 +9,11 @@ concurrency:
 
 jobs:
   build:
-    name: Python ${{ matrix.python[0] }} on ${{ matrix.os_arch[0] }}-${{ matrix.os_arch[1] }}
-    runs-on: ${{ matrix.os_arch[0] }}
+    name: Python ${{ inputs.python[0] }} on ${{ inputs.os_arch[0] }}-${{ inputs.os_arch[1] }}
+    runs-on: ${{ inputs.os_arch[0] }}
     timeout-minutes: 15
     env:
-      CIBW_BUILD: ${{ matrix.python[1] }}-${{ matrix.os_arch[1] }}
+      CIBW_BUILD: ${{ inputs.python[1] }}-${{ inputs.os_arch[1] }}
 
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python[0] }}
+          python-version: ${{ inputs.python[0] }}
 
       - name: Set up gcc-14
         if: ${{ contains(runner.os, 'macos') }}
