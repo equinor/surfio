@@ -16,5 +16,7 @@ jobs:
           - [windows-latest, win_amd64]
           - [macos-latest, macosx_arm64] # macos-latest is always arm64 going forward
     with:
-      python: ${{matrix.python}}
-      os_arch: ${{matrix.os_arch}}
+      python-version: ${{matrix.python[0]}}
+      python-shortname: ${{matrix.python[1]}}
+      os: ${{matrix.os_arch[0]}}
+      arch: ${{matrix.os_arch[1]}}
