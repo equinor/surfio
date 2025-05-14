@@ -1,3 +1,5 @@
+#pragma once
+
 #include "irap.h"
 #include <ostream>
 
