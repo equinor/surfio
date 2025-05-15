@@ -35,7 +35,7 @@ jobs:
         with:
           python-version: ${{ inputs.python-version }}
 
-      - name: Set up gcc-14
+      - name: Configure compiler vars [macos]
         if: ${{ contains(runner.os, 'macos') }}
         run: |
           echo "CC=gcc-14" >> $GITHUB_ENV
@@ -45,7 +45,7 @@ jobs:
           echo "RANLIB=gcc-ranlib-14" >> $GITHUB_ENV
           echo "MACOSX_DEPLOYMENT_TARGET=13.0" >> $GITHUB_ENV
 
-      - name: Set up gcc-14 on arm
+      - name: Configure compiler vars [macos/arm]
         if: ${{ contains(runner.arch, 'ARM64') }}
         run: echo "MACOSX_DEPLOYMENT_TARGET=14.0" >> $GITHUB_ENV
 
