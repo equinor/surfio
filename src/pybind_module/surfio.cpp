@@ -81,7 +81,7 @@ PYBIND11_MODULE(surfio, m) {
       .def_readwrite("header", &irap_python::header)
       .def_readwrite("values", &irap_python::values)
       .def_static(
-          "import_ascii_file",
+          "from_ascii_file",
           [](fs::path file) -> irap_python* {
             auto irap = irap::from_ascii_file(file);
             // lock the GIL before creating the numpy array
@@ -91,7 +91,7 @@ PYBIND11_MODULE(surfio, m) {
           py::call_guard<py::gil_scoped_release>()
       )
       .def_static(
-          "import_ascii",
+          "from_ascii_string",
           [](std::string_view string) -> irap_python* {
             auto irap = irap::from_ascii_string(string);
             // lock the GIL before creating the numpy array
@@ -101,7 +101,7 @@ PYBIND11_MODULE(surfio, m) {
           py::call_guard<py::gil_scoped_release>()
       )
       .def_static(
-          "import_binary_file",
+          "from_binary_file",
           [](fs::path file) -> irap_python* {
             auto irap = irap::from_binary_file(file);
             // lock the GIL before creating the numpy array
@@ -111,9 +111,9 @@ PYBIND11_MODULE(surfio, m) {
           py::call_guard<py::gil_scoped_release>()
       )
       .def_static(
-          "import_binary",
+          "from_binary_buffer",
           [](const py::bytes& buffer) -> irap_python* {
-            auto irap = irap::from_binary_buffer(std::string_view(buffer));
+            auto irap = irap::from_binary_buffer(std::string_view{buffer});
             // lock the GIL before creating the numpy array
             py::gil_scoped_acquire acquire;
             return make_irap_python(irap);
@@ -121,25 +121,25 @@ PYBIND11_MODULE(surfio, m) {
           py::call_guard<py::gil_scoped_release>()
       )
       .def(
-          "export_ascii",
+          "to_ascii_string",
           [](const irap_python& ip) -> std::string {
             return irap::to_ascii_string(ip.header, make_surf_span(ip));
           }
       )
       .def(
-          "export_ascii_file",
+          "to_ascii_file",
           [](const irap_python& ip, fs::path file) -> void {
             irap::to_ascii_file(file, ip.header, make_surf_span(ip));
           }
       )
       .def(
-          "export_binary",
+          "to_binary_buffer",
           [](const irap_python& ip) -> py::bytes {
             auto buffer = irap::to_binary_buffer(ip.header, make_surf_span(ip));
             return py::bytes(buffer);
           }
       )
-      .def("export_binary_file", [](const irap_python& ip, fs::path file) -> void {
+      .def("to_binary_file", [](const irap_python& ip, fs::path file) -> void {
         irap::to_binary_file(file, ip.header, make_surf_span(ip));
       });
 }

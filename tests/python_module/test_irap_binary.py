@@ -23,12 +23,12 @@ def test_reading_empty_file_errors(tmp_path):
     irap_path = tmp_path / "test.irap"
     irap_path.write_text("")
     with pytest.raises(RuntimeError, match="failed to map file"):
-        surfio.IrapSurface.import_ascii_file(str(irap_path))
+        surfio.IrapSurface.from_ascii_file(str(irap_path))
 
 
 def test_reading_short_header_results_in_value_error():
     with pytest.raises(ValueError, match="Failed to read irap headers"):
-        _ = surfio.IrapSurface.import_ascii("-996 1")
+        _ = surfio.IrapSurface.from_ascii_string("-996 1")
 
 
 def test_short_files_result_in_value_error():
@@ -38,7 +38,7 @@ def test_short_files_result_in_value_error():
     srf.to_file(file_buffer, "irap_binary")
     file_buffer.truncate(100)
     with pytest.raises(ValueError, match="End of file reached"):
-        _ = surfio.IrapSurface.import_binary(file_buffer.getvalue())
+        _ = surfio.IrapSurface.from_binary_buffer(file_buffer.getvalue())
 
 
 def test_binary_xtgeo_is_imported_correctly_in_surfio():
@@ -46,7 +46,7 @@ def test_binary_xtgeo_is_imported_correctly_in_surfio():
     srf = xtgeo.RegularSurface(ncol=3, nrow=4, xinc=1, yinc=1, values=values)
     file_buffer = BytesIO()
     srf.to_file(file_buffer, "irap_binary")
-    srf_imported = surfio.IrapSurface.import_binary(file_buffer.getvalue())
+    srf_imported = surfio.IrapSurface.from_binary_buffer(file_buffer.getvalue())
     assert np.allclose(srf.values, srf_imported.values)
     compare_xtgeo_surface_with_surfio_header(srf, srf_imported.header)
 
@@ -56,8 +56,8 @@ def test_surfio_can_import_data_exported_from_surfio():
         surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=8.0, ymax=8.0),
         values=np.arange(6, dtype=np.float32).reshape((3, 2)),
     )
-    buffer = srf.export_binary()
-    srf_imported = surfio.IrapSurface.import_binary(buffer)
+    buffer = srf.to_binary_buffer()
+    srf_imported = surfio.IrapSurface.from_binary_buffer(buffer)
 
     assert np.allclose(srf.values, srf_imported.values)
     assert srf.header == srf_imported.header
@@ -68,8 +68,8 @@ def test_surfio_can_export_values_in_fortran_order():
         surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=8.0, ymax=8.0),
         values=np.asfortranarray(np.arange(6, dtype=np.float32).reshape((3, 2))),
     )
-    buffer = srf.export_binary()
-    srf_imported = surfio.IrapSurface.import_binary(buffer)
+    buffer = srf.to_binary_buffer()
+    srf_imported = surfio.IrapSurface.from_binary_buffer(buffer)
 
     assert np.allclose(srf.values, srf_imported.values)
     assert srf.header == srf_imported.header
@@ -80,7 +80,7 @@ def test_xtgeo_can_import_data_exported_from_surfio(tmp_path):
         surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=8.0, ymax=8.0),
         values=np.arange(6, dtype=np.float32).reshape((3, 2)),
     )
-    srf.export_binary_file(str(tmp_path / "test.irap"))
+    srf.to_binary_file(str(tmp_path / "test.irap"))
     srf_imported = xtgeo.surface_from_file(tmp_path / "test.irap")
 
     assert np.allclose(srf.values, srf_imported.values)
@@ -93,5 +93,5 @@ def test_exporting_nan_maps_to_9999900():
         values=np.array([[np.nan]], dtype=np.float32),
     )
 
-    srf_export = surface.export_binary()
+    srf_export = surface.to_binary_buffer()
     assert struct.unpack("f", srf_export[107:103:-1]) == (9999900.0,)
