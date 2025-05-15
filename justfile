@@ -30,3 +30,7 @@ test-python:
 [doc("Run cibuildwheel")]
 test-cibuildwheel $CIBW_CONTAINER_ENGINE=container_engine:
   cibuildwheel --only cp311-manylinux_x86_64
+
+[doc("Compare surfio with xtgeo")]
+compare:
+  uv run python tests/manual_performance_test/compare.py
