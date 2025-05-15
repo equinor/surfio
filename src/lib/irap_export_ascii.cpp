@@ -39,27 +39,27 @@ void write_values_ascii(surf_span values, std::ostream& out) {
   }
 }
 
-void export_irap_to_ascii_file(const fs::path& file, const irap_header& header, surf_span values) {
+void to_ascii_file(const fs::path& file, const irap_header& header, surf_span values) {
   std::ofstream out(file);
   write_header_ascii(header, out);
   write_values_ascii(values, out);
 }
 
-void export_irap_to_ascii_file(const fs::path& file, const irap& data) {
-  export_irap_to_ascii_file(
+void to_ascii_file(const fs::path& file, const irap& data) {
+  to_ascii_file(
       file, data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }
 
-std::string export_irap_to_ascii_string(const irap_header& header, surf_span values) {
+std::string to_ascii_string(const irap_header& header, surf_span values) {
   std::stringstream out;
   write_header_ascii(header, out);
   write_values_ascii(values, out);
   return out.str();
 }
 
-std::string export_irap_to_ascii_string(const irap& data) {
-  return export_irap_to_ascii_string(
+std::string to_ascii_string(const irap& data) {
+  return to_ascii_string(
       data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }

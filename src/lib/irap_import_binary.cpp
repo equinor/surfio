@@ -107,7 +107,7 @@ std::vector<float> get_values_binary(const char* start, const char* end, int nco
   return values;
 }
 
-irap import_irap_binary(const fs::path& file) {
+irap from_binary_file(const fs::path& file) {
   auto buffer = mmap::mmap_file(file);
   auto [header, ptr] = get_header_binary(buffer);
   auto values = get_values_binary(ptr, buffer.end(), header.ncol, header.nrow);
@@ -115,7 +115,7 @@ irap import_irap_binary(const fs::path& file) {
   return {.header = header, .values = std::move(values)};
 }
 
-irap import_irap_binary_from_buffer(std::span<const char> buffer) {
+irap from_binary_buffer(std::span<const char> buffer) {
   auto buffer_end = &*buffer.begin() + buffer.size();
   auto [header, ptr] = get_header_binary(buffer);
   auto values = get_values_binary(ptr, buffer_end, header.ncol, header.nrow);

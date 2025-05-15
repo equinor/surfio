@@ -77,27 +77,27 @@ void write_values_binary(surf_span values, std::ostream& out) {
     out.write(buf, dist);
 }
 
-void export_irap_to_binary_file(const fs::path& file, const irap_header& header, surf_span values) {
+void to_binary_file(const fs::path& file, const irap_header& header, surf_span values) {
   std::ofstream out(file, std::ios::binary);
   write_header_binary(header, out);
   write_values_binary(values, out);
 }
 
-void export_irap_to_binary_file(const fs::path& file, const irap& data) {
-  export_irap_to_binary_file(
+void to_binary_file(const fs::path& file, const irap& data) {
+  to_binary_file(
       file, data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }
 
-std::string export_irap_to_binary_string(const irap_header& header, surf_span values) {
+std::string to_binary_buffer(const irap_header& header, surf_span values) {
   std::ostringstream out;
   write_header_binary(header, out);
   write_values_binary(values, out);
   return out.str();
 }
 
-std::string export_irap_to_binary_string(const irap& data) {
-  return export_irap_to_binary_string(
+std::string to_binary_buffer(const irap& data) {
+  return to_binary_buffer(
       data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }
