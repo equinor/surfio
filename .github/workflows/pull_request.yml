@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   build:
-    uses: ./.github/workflows/publish.yml
+    uses: ./.github/workflows/build.yml
     strategy:
       fail-fast: false
       matrix:
@@ -18,7 +18,7 @@ jobs:
         os_arch:
           - [ubuntu-latest, manylinux_x86_64]
           - [windows-latest, win_amd64]
-          - [macos-latest, macosx_arm64] # macos-latest is always arm64 going forward
+          - [macos-latest, macosx_arm64]
     with:
       python-version: ${{matrix.python[0]}}
       python-shortname: ${{matrix.python[1]}}
