@@ -10,6 +10,7 @@
 
 namespace fs = std::filesystem;
 
+namespace surfio::irap {
 // All irap headers start with -996
 static const auto id = std::format("{} ", irap_header::id);
 static auto UNDEF_MAP_IRAP_STRING = std::format("{:f}", UNDEF_MAP_IRAP);
@@ -62,3 +63,4 @@ std::string export_irap_to_ascii_string(const irap& data) {
       data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }
+} // namespace surfio::irap

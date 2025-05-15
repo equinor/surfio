@@ -2,6 +2,8 @@
 
 #include <bit>
 #include <vector>
+
+namespace surfio::irap {
 constexpr float UNDEF_MAP_IRAP = 9999900.0000;
 
 struct irap_header {
@@ -35,3 +37,4 @@ concept IsLittleEndian = std::endian::native == std::endian::little;
 template <typename T>
 concept IsLittleEndianNumeric =
     (std::integral<std::decay_t<T>> || std::floating_point<std::decay_t<T>>) && IsLittleEndian<T>;
+} // namespace surfio::irap

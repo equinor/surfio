@@ -5,6 +5,7 @@
 
 namespace fs = std::filesystem;
 
+namespace surfio::mmap {
 struct internals {
   mio::mmap_source handle;
 };
@@ -23,3 +24,4 @@ mmap_file::mmap_file(const fs::path& file) {
 mmap_file::~mmap_file() {}
 const char* mmap_file::begin() const { return d->handle.begin(); }
 const char* mmap_file::end() const { return d->handle.end(); }
+} // namespace surfio::mmap

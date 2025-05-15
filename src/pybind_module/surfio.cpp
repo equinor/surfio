@@ -11,21 +11,22 @@
 
 namespace py = pybind11;
 namespace fs = std::filesystem;
+using namespace surfio;
 
-irap_python* make_irap_python(const irap& data) {
-  constexpr auto size = sizeof(decltype(irap::values)::value_type);
+irap_python* make_irap_python(const irap::irap& data) {
+  constexpr auto size = sizeof(decltype(irap::irap::values)::value_type);
   return new irap_python{
       data.header,
       {{data.header.ncol, data.header.nrow}, {size * data.header.nrow, size}, data.values.data()}
   };
 }
 
-surf_span make_surf_span(const irap_python& ip) {
-  return surf_span{ip.values.data(), ip.values.shape(0), ip.values.shape(1)};
+irap::surf_span make_surf_span(const irap_python& ip) {
+  return irap::surf_span{ip.values.data(), ip.values.shape(0), ip.values.shape(1)};
 }
 
 PYBIND11_MODULE(surfio, m) {
-  py::class_<irap_header>(m, "IrapHeader")
+  py::class_<irap::irap_header>(m, "IrapHeader")
       .def(
           py::init<
               int, int, double, double, double, double, double, double, double, double, double>(),
@@ -35,7 +36,7 @@ PYBIND11_MODULE(surfio, m) {
       )
       .def(
           "__repr__",
-          [](const irap_header& header) {
+          [](const irap::irap_header& header) {
             return std::format(
                 "<IrapHeader(ncol={}, nrow={}, xori={}, yori={}, xmax={}, "
                 "ymax={}, xinc={}, yinc={}, rot={}, xrot={}, yrot={})>",
@@ -46,22 +47,23 @@ PYBIND11_MODULE(surfio, m) {
       )
       .def(py::self == py::self)
       .def(py::self != py::self)
-      .def_readonly_static("id", &irap_header::id)
-      .def_readwrite("ncol", &irap_header::ncol)
-      .def_readwrite("nrow", &irap_header::nrow)
-      .def_readwrite("xori", &irap_header::xori)
-      .def_readwrite("yori", &irap_header::yori)
-      .def_readwrite("xmax", &irap_header::xmax)
-      .def_readwrite("ymax", &irap_header::ymax)
-      .def_readwrite("xinc", &irap_header::xinc)
-      .def_readwrite("yinc", &irap_header::yinc)
-      .def_readwrite("rot", &irap_header::rot)
-      .def_readwrite("xrot", &irap_header::xrot)
-      .def_readwrite("yrot", &irap_header::yrot);
+      .def_readonly_static("id", &irap::irap_header::id)
+      .def_readwrite("ncol", &irap::irap_header::ncol)
+      .def_readwrite("nrow", &irap::irap_header::nrow)
+      .def_readwrite("xori", &irap::irap_header::xori)
+      .def_readwrite("yori", &irap::irap_header::yori)
+      .def_readwrite("xmax", &irap::irap_header::xmax)
+      .def_readwrite("ymax", &irap::irap_header::ymax)
+      .def_readwrite("xinc", &irap::irap_header::xinc)
+      .def_readwrite("yinc", &irap::irap_header::yinc)
+      .def_readwrite("rot", &irap::irap_header::rot)
+      .def_readwrite("xrot", &irap::irap_header::xrot)
+      .def_readwrite("yrot", &irap::irap_header::yrot);
 
   py::class_<irap_python>(m, "IrapSurface")
       .def(
-          py::init<irap_header, py::array_t<float, py::array::c_style | py::array::forcecast>>(),
+          py::init<
+              irap::irap_header, py::array_t<float, py::array::c_style | py::array::forcecast>>(),
           py::arg("header"), py::arg("values")
       )
       .def(
@@ -81,7 +83,7 @@ PYBIND11_MODULE(surfio, m) {
       .def_static(
           "import_ascii_file",
           [](fs::path file) -> irap_python* {
-            auto irap = import_irap_ascii(file);
+            auto irap = irap::import_irap_ascii(file);
             // lock the GIL before creating the numpy array
             py::gil_scoped_acquire acquire;
             return make_irap_python(irap);
@@ -91,7 +93,7 @@ PYBIND11_MODULE(surfio, m) {
       .def_static(
           "import_ascii",
           [](std::string_view string) -> irap_python* {
-            auto irap = import_irap_ascii_from_string(string);
+            auto irap = irap::import_irap_ascii_from_string(string);
             // lock the GIL before creating the numpy array
             py::gil_scoped_acquire acquire;
             return make_irap_python(irap);
@@ -101,7 +103,7 @@ PYBIND11_MODULE(surfio, m) {
       .def_static(
           "import_binary_file",
           [](fs::path file) -> irap_python* {
-            auto irap = import_irap_binary(file);
+            auto irap = irap::import_irap_binary(file);
             // lock the GIL before creating the numpy array
             py::gil_scoped_acquire acquire;
             return make_irap_python(irap);
@@ -111,7 +113,7 @@ PYBIND11_MODULE(surfio, m) {
       .def_static(
           "import_binary",
           [](const py::bytes& buffer) -> irap_python* {
-            auto irap = import_irap_binary_from_buffer(std::string_view(buffer));
+            auto irap = irap::import_irap_binary_from_buffer(std::string_view(buffer));
             // lock the GIL before creating the numpy array
             py::gil_scoped_acquire acquire;
             return make_irap_python(irap);
@@ -121,23 +123,23 @@ PYBIND11_MODULE(surfio, m) {
       .def(
           "export_ascii",
           [](const irap_python& ip) -> std::string {
-            return export_irap_to_ascii_string(ip.header, make_surf_span(ip));
+            return irap::export_irap_to_ascii_string(ip.header, make_surf_span(ip));
           }
       )
       .def(
           "export_ascii_file",
           [](const irap_python& ip, fs::path file) -> void {
-            export_irap_to_ascii_file(file, ip.header, make_surf_span(ip));
+            irap::export_irap_to_ascii_file(file, ip.header, make_surf_span(ip));
           }
       )
       .def(
           "export_binary",
           [](const irap_python& ip) -> py::bytes {
-            auto buffer = export_irap_to_binary_string(ip.header, make_surf_span(ip));
+            auto buffer = irap::export_irap_to_binary_string(ip.header, make_surf_span(ip));
             return py::bytes(buffer);
           }
       )
       .def("export_binary_file", [](const irap_python& ip, fs::path file) -> void {
-        export_irap_to_binary_file(file, ip.header, make_surf_span(ip));
+        irap::export_irap_to_binary_file(file, ip.header, make_surf_span(ip));
       });
 }

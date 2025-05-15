@@ -8,18 +8,19 @@
 #include <irap_import.h>
 
 using namespace Catch;
+using namespace surfio;
 namespace fs = std::filesystem;
 
 SCENARIO("Verify that surfio can read and write irap binary files", "[test_irap_binary.cpp]") {
   fs::path filename("surf.irap");
-  auto header = irap_header{
+  auto header = irap::irap_header{
       .ncol = 6000,
       .nrow = 6000,
   };
   auto values = create_random_values(header.ncol * header.nrow);
-  auto original = irap{.header = header, .values = values};
+  auto original = irap::irap{.header = header, .values = values};
   export_irap_to_binary_file(filename, original);
-  auto imported = import_irap_binary(filename);
+  auto imported = irap::import_irap_binary(filename);
 
   CHECK(imported.header == original.header);
   CHECK_THAT(imported.values, Matchers::Approx(original.values).margin(0.001));
