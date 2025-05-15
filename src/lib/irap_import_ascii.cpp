@@ -82,7 +82,7 @@ std::vector<float> get_values(const char* start, const char* end, int ncol, int 
   return values;
 }
 
-irap import_irap_ascii(const fs::path& file) {
+irap from_ascii_file(const fs::path& file) {
   auto buffer = mmap::mmap_file(file);
 
   auto [head, ptr] = get_header(buffer.begin(), buffer.end());
@@ -91,7 +91,7 @@ irap import_irap_ascii(const fs::path& file) {
   return {.header = std::move(head), .values = std::move(values)};
 }
 
-irap import_irap_ascii_from_string(std::string_view buffer) {
+irap from_ascii_string(std::string_view buffer) {
   auto buffer_begin = buffer.data();
   auto buffer_end = buffer_begin + buffer.size();
   auto [head, ptr] = get_header(buffer_begin, buffer_end);

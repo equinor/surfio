@@ -8,8 +8,8 @@
 #include <irap_import.h>
 
 using namespace Catch;
-namespace fs = std::filesystem;
 using namespace surfio;
+namespace fs = std::filesystem;
 
 SCENARIO("Verify that surfio can read and write irap ascii files", "[test_irap_ascii.cpp]") {
   fs::path filename("surf.irap");
@@ -19,8 +19,8 @@ SCENARIO("Verify that surfio can read and write irap ascii files", "[test_irap_a
   };
   auto values = create_random_values(header.ncol * header.nrow);
   auto original = irap::irap{.header = header, .values = values};
-  export_irap_to_ascii_file(filename, original);
-  auto imported = irap::import_irap_ascii(filename);
+  irap::to_ascii_file(filename, original);
+  auto imported = irap::from_ascii_file(filename);
 
   CHECK(imported.header == original.header);
   CHECK_THAT(imported.values, Matchers::Approx(original.values).margin(0.001));

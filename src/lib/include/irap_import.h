@@ -11,8 +11,8 @@ inline size_t column_major_to_row_major_index(size_t idx, size_t nrow, size_t nc
   return idx / nrow + (idx % nrow) * ncol;
 }
 
-irap import_irap_ascii(const std::filesystem::path& file);
-irap import_irap_ascii_from_string(std::string_view buffer);
-irap import_irap_binary(const std::filesystem::path& file);
-irap import_irap_binary_from_buffer(std::span<const char> buffer);
+irap from_ascii_file(const std::filesystem::path& file);
+irap from_ascii_string(std::string_view buffer);
+irap from_binary_file(const std::filesystem::path& file);
+irap from_binary_buffer(std::span<const char> buffer);
 } // namespace surfio::irap

@@ -27,19 +27,15 @@ constexpr size_t PER_LINE_BINARY = 8;
 
 using surf_span = mdspan<const float, extents<size_t, dynamic_extent, dynamic_extent>>;
 
-void export_irap_to_ascii_file(
-    const std::filesystem::path& file, const irap_header& header, surf_span values
-);
-void export_irap_to_ascii_file(const std::filesystem::path& file, const irap& data);
+void to_ascii_file(const std::filesystem::path& file, const irap_header& header, surf_span values);
+void to_ascii_file(const std::filesystem::path& file, const irap& data);
 
-std::string export_irap_to_ascii_string(const irap_header& header, surf_span values);
-std::string export_irap_to_ascii_string(const irap& data);
+std::string to_ascii_string(const irap_header& header, surf_span values);
+std::string to_ascii_string(const irap& data);
 
-void export_irap_to_binary_file(
-    const std::filesystem::path& file, const irap_header& header, surf_span values
-);
-void export_irap_to_binary_file(const std::filesystem::path& file, const irap& data);
+void to_binary_file(const std::filesystem::path& file, const irap_header& header, surf_span values);
+void to_binary_file(const std::filesystem::path& file, const irap& data);
 
-std::string export_irap_to_binary_string(const irap_header& header, surf_span values);
-std::string export_irap_to_binary_string(const irap& data);
+std::string to_binary_buffer(const irap_header& header, surf_span values);
+std::string to_binary_buffer(const irap& data);
 } // namespace surfio::irap

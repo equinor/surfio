@@ -19,8 +19,8 @@ SCENARIO("Verify that surfio can read and write irap binary files", "[test_irap_
   };
   auto values = create_random_values(header.ncol * header.nrow);
   auto original = irap::irap{.header = header, .values = values};
-  export_irap_to_binary_file(filename, original);
-  auto imported = irap::import_irap_binary(filename);
+  irap::to_binary_file(filename, original);
+  auto imported = irap::from_binary_file(filename);
 
   CHECK(imported.header == original.header);
   CHECK_THAT(imported.values, Matchers::Approx(original.values).margin(0.001));
