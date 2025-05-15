@@ -2,7 +2,6 @@
 
 #include "irap.h"
 #include <filesystem>
-#include <ostream>
 
 #if __cpp_lib_mdspan
 #include <mdspan>
@@ -22,11 +21,6 @@ constexpr size_t MAX_PER_LINE = 9; // Maximum accepted by some software
 constexpr size_t PER_LINE_BINARY = 8;
 
 using surf_span = mdspan<const float, extents<size_t, dynamic_extent, dynamic_extent>>;
-
-void write_header_ascii(const irap_header& header, std::ostream& out);
-void write_values_ascii(surf_span values, std::ostream& out);
-void write_header_binary(const irap_header& header, std::ostream& out);
-void write_values_binary(surf_span values, std::ostream& out);
 
 void export_irap_to_ascii_file(
     const std::filesystem::path& file, const irap_header& header, surf_span values
