@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <memory>
 
+namespace surfio::mmap {
 struct internals;
 
 class mmap_file {
@@ -13,3 +14,4 @@ public:
 private:
   std::unique_ptr<internals> d;
 };
+} // namespace surfio::mmap

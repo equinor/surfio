@@ -5,11 +5,16 @@
 
 #if __cpp_lib_mdspan
 #include <mdspan>
+#else
+#include <experimental/mdspan>
+#endif
+
+namespace surfio::irap {
+#if __cpp_lib_mdspan
 using std::dynamic_extent;
 using std::extents;
 using std::mdspan;
 #else
-#include <experimental/mdspan>
 using std::experimental::dynamic_extent;
 using std::experimental::extents;
 using std::experimental::mdspan;
@@ -37,3 +42,4 @@ void export_irap_to_binary_file(const std::filesystem::path& file, const irap& d
 
 std::string export_irap_to_binary_string(const irap_header& header, surf_span values);
 std::string export_irap_to_binary_string(const irap& data);
+} // namespace surfio::irap

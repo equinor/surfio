@@ -11,6 +11,7 @@
 
 namespace fs = std::filesystem;
 
+namespace surfio::irap {
 template <IsLittleEndianNumeric T> void write_32bit_binary_value(char*& bufptr, T&& value) {
   std::array<char, 4> tmp;
   if constexpr (std::is_integral_v<std::decay_t<T>>)
@@ -100,3 +101,4 @@ std::string export_irap_to_binary_string(const irap& data) {
       data.header, surf_span{data.values.data(), data.header.ncol, data.header.nrow}
   );
 }
+} // namespace surfio::irap

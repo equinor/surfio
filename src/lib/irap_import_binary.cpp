@@ -13,6 +13,7 @@
 
 namespace fs = std::filesystem;
 
+namespace surfio::irap {
 template <typename T> T swap_byte_order(const T& value) {
   auto tmp = std::bit_cast<std::array<std::byte, sizeof(T)>>(value);
   std::ranges::reverse(tmp);
@@ -107,7 +108,7 @@ std::vector<float> get_values_binary(const char* start, const char* end, int nco
 }
 
 irap import_irap_binary(const fs::path& file) {
-  auto buffer = mmap_file(file);
+  auto buffer = mmap::mmap_file(file);
   auto [header, ptr] = get_header_binary(buffer);
   auto values = get_values_binary(ptr, buffer.end(), header.ncol, header.nrow);
 
@@ -121,3 +122,4 @@ irap import_irap_binary_from_buffer(std::span<const char> buffer) {
 
   return {.header = header, .values = std::move(values)};
 }
+} // namespace surfio::irap

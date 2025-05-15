@@ -7,6 +7,7 @@
 
 namespace fs = std::filesystem;
 
+namespace surfio::irap {
 auto locale = std::locale("C");
 auto& facet = std::use_facet<std::ctype<char>>(locale);
 auto is_space = [](char ch) { return facet.is(std::ctype_base::space, ch); };
@@ -82,7 +83,7 @@ std::vector<float> get_values(const char* start, const char* end, int ncol, int 
 }
 
 irap import_irap_ascii(const fs::path& file) {
-  auto buffer = mmap_file(file);
+  auto buffer = mmap::mmap_file(file);
 
   auto [head, ptr] = get_header(buffer.begin(), buffer.end());
   auto values = get_values(ptr, buffer.end(), head.ncol, head.nrow);
@@ -98,3 +99,4 @@ irap import_irap_ascii_from_string(std::string_view buffer) {
 
   return {.header = std::move(head), .values = std::move(values)};
 }
+} // namespace surfio::irap
