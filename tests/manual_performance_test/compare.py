@@ -44,8 +44,8 @@ with TemporaryDirectory() as dir:
         repeat=10,
     )
     surfio_result = timeit.repeat(
-        setup=f'from surfio import IrapSurface; surf = IrapSurface.import_binary_file("{input_file_binary}")',
-        stmt=f'IrapSurface.export_binary_file(surf, "{output_file}")',
+        setup=f'from surfio import IrapSurface; surf = IrapSurface.from_binary_file("{input_file_binary}")',
+        stmt=f'IrapSurface.to_binary_file(surf, "{output_file}")',
         number=1,
         repeat=10,
     )
@@ -59,8 +59,8 @@ with TemporaryDirectory() as dir:
         repeat=10,
     )
     surfio_result = timeit.repeat(
-        setup=f'from surfio import IrapSurface; surf = IrapSurface.import_binary_file("{input_file_binary}")',
-        stmt=f'IrapSurface.export_binary_file(surf, "{output_file}")',
+        setup=f'from surfio import IrapSurface; surf = IrapSurface.from_binary_file("{input_file_binary}")',
+        stmt=f'IrapSurface.to_binary_file(surf, "{output_file}")',
         number=1,
         repeat=10,
     )
@@ -75,7 +75,7 @@ with TemporaryDirectory() as dir:
     )
     surfio_result = timeit.repeat(
         setup="from surfio import IrapSurface",
-        stmt=f'IrapSurface.import_binary_file("{input_file_binary}")',
+        stmt=f'IrapSurface.from_binary_file("{input_file_binary}")',
         number=1,
         repeat=10,
     )
@@ -90,7 +90,7 @@ with TemporaryDirectory() as dir:
     )
     surfio_result = timeit.repeat(
         setup="from surfio import IrapSurface",
-        stmt=f'IrapSurface.import_ascii_file("{input_file_ascii}")',
+        stmt=f'IrapSurface.from_ascii_file("{input_file_ascii}")',
         number=1,
         repeat=10,
     )
