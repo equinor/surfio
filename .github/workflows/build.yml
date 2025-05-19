@@ -1,28 +1,28 @@
 name: Build
 
 on:
-  workflow_call:
-    inputs:
-      python-version:
-        required: true
-        type: string
-      python-shortname:
-        required: true
-        type: string
-      os:
-        required: true
-        type: string
-      arch:
-        required: true
-        type: string
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   build:
-    name: Python ${{ inputs.python-version }} on ${{ inputs.os }}-${{ inputs.arch }}
-    runs-on: ${{ inputs.os }}
+    name: Python ${{ matrix.python[0] }} on ${{ matrix.os_arch[0] }}-${{ matrix.os_arch[1] }}
+    runs-on: ${{ matrix.os_arch[0] }}
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python:
+          - ["3.11", cp311]
+        os_arch:
+          - [ubuntu-latest, manylinux_x86_64]
+          - [windows-latest, win_amd64]
+          - [macos-latest, macosx_arm64] # macos-latest is always arm64 going forward
     env:
-      CIBW_BUILD: ${{ inputs.python-shortname }}-${{ inputs.arch }}
+      CIBW_BUILD: ${{ matrix.python[1] }}-${{ matrix.os_arch[1] }}
 
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: ${{ matrix.python[0] }}
 
       - name: Configure compiler vars [macos]
         if: ${{ contains(runner.os, 'macos') }}
@@ -57,9 +57,3 @@ jobs:
 
       - name: Check metadata
         run: twine check wheelhouse/*
-
-      - uses: actions/upload-artifact@v4
-        if: ${{ github.event_name == 'release' && github.event.action == 'published' }}
-        with:
-          name: cibw-${{ env.CIBW_BUILD }}
-          path: wheelhouse/*.whl
