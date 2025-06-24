@@ -6,6 +6,12 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
+find_package(
+  Python 3.11 REQUIRED
+  COMPONENTS Development.Module Interpreter
+  OPTIONAL_COMPONENTS Development.Embed
+)
+
 # dependencies
 include(FetchContent)
 FetchContent_Declare(
@@ -38,12 +44,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
-
-find_package(
-  Python 3.11 REQUIRED
-  COMPONENTS Development.Module Interpreter NumPy
-  OPTIONAL_COMPONENTS Development.Embed
-)
 
 # compile options as a target
 add_library(surfio-compile-options INTERFACE)
