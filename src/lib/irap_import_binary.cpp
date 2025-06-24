@@ -99,7 +99,7 @@ std::vector<float> get_values_binary(const char* start, const char* end, int nco
       float value;
       ptr = read_32bit_value(ptr, end, value);
       auto ic = column_major_to_row_major_index(i, ncol, nrow);
-      values[ic] = value;
+      values[ic] = value < UNDEF_MAP_IRAP_BINARY ? value : std::numeric_limits<float>::quiet_NaN();
     }
     ptr = read_and_check_value(ptr, end, chunk_size, "Block size mismatch");
   }

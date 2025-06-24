@@ -72,7 +72,7 @@ std::vector<float> get_values(const char* start, const char* end, int ncol, int 
     if (result.ec != std::errc())
       throw std::domain_error("Failed to read values during Irap ASCII import.");
 
-    if (value == UNDEF_MAP_IRAP)
+    if (value >= UNDEF_MAP_IRAP_ASCII)
       value = std::numeric_limits<float>::quiet_NaN();
 
     auto ic = column_major_to_row_major_index(i, ncol, nrow);
