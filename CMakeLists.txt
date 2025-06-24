@@ -44,7 +44,6 @@ find_package(
   COMPONENTS Development.Module Interpreter NumPy
   OPTIONAL_COMPONENTS Development.Embed
 )
-cmake_policy(SET CMP0167 NEW)
 
 # compile options as a target
 add_library(surfio-compile-options INTERFACE)
