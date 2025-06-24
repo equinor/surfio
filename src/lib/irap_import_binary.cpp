@@ -72,7 +72,7 @@ std::tuple<irap_header, const char*> get_header_binary(std::span<const char> buf
         header.xinc, header.yinc
     );
     if (dummy != irap_header::id)
-      std::domain_error(
+      throw std::domain_error(
           std::format("Incorrect magic number: {}. Expected {}", dummy, irap_header::id)
       );
     ptr = read_chunk(ptr, end, header.ncol, header.rot, header.xrot, header.yrot);
