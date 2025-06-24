@@ -4,8 +4,8 @@
 #include <vector>
 
 namespace surfio::irap {
-constexpr float UNDEF_MAP_IRAP_ASCII = 9999900.0000;
-constexpr float UNDEF_MAP_IRAP_BINARY = 1e30;
+constexpr float UNDEF_MAP_IRAP_ASCII = 9999900.f;
+constexpr float UNDEF_MAP_IRAP_BINARY = 1e30f;
 
 struct irap_header {
   // All irap headers start with -996
