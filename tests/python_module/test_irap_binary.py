@@ -87,11 +87,11 @@ def test_xtgeo_can_import_data_exported_from_surfio(tmp_path):
     compare_xtgeo_surface_with_surfio_header(srf_imported, srf.header)
 
 
-def test_exporting_nan_maps_to_9999900():
+def test_exporting_nan() -> None:
     surface = surfio.IrapSurface(
         surfio.IrapHeader(ncol=1, nrow=1, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0),
         values=np.array([[np.nan]], dtype=np.float32),
     )
 
     srf_export = surface.to_binary_buffer()
-    assert struct.unpack("f", srf_export[107:103:-1]) == (9999900.0,)
+    assert struct.unpack("f", srf_export[107:103:-1])[0] >= 1e30

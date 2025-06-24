@@ -57,7 +57,7 @@ void write_values_binary(surf_span values, std::ostream& out) {
       }
 
       auto v = values(i, j);
-      write_32bit_binary_value(bufptr, std::isnan(v) ? UNDEF_MAP_IRAP : v);
+      write_32bit_binary_value(bufptr, std::isnan(v) ? UNDEF_MAP_IRAP_BINARY : v);
 
       if (++written_on_line == chunk_length) {
         write_32bit_binary_value(bufptr, chunk_length * 4);
