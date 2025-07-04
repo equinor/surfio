@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
+option(FORCE_PARENS_IN_MDSPAN "Force use of parens to index into mdspan. \
+This will force the use of kokkos/mdspan even if std::mdspan is available" False
+)
+
 find_package(
   Python 3.11 REQUIRED
   COMPONENTS Development.Module Interpreter
@@ -54,6 +58,9 @@ else()
   target_compile_options(surfio-compile-options INTERFACE -Wall -Wextra -Werror)
   target_compile_options(surfio-compile-options INTERFACE "$<$<CONFIG:Release>:-O3>")
 endif()
+target_compile_options(
+  surfio-compile-options INTERFACE -DFORCE_PARENS_IN_MDSPAN=$<BOOL:${FORCE_PARENS_IN_MDSPAN}>
+)
 
 # surfio_lib
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/lib")

@@ -56,7 +56,7 @@ void write_values_binary(surf_span values, std::ostream& out) {
         write_32bit_binary_value(bufptr, chunk_length * 4);
       }
 
-#if __cpp_multidimensional_subscript
+#if !USE_PARENS_IN_MDSPAN
       auto v = values[i, j];
 #else
       auto v = values(i, j);

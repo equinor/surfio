@@ -29,7 +29,7 @@ void write_values_ascii(surf_span values, std::ostream& out) {
   auto cols = values.extent(1);
   for (size_t j = 0; j < cols; j++) {
     for (size_t i = 0; i < rows; i++) {
-#if __cpp_multidimensional_subscript
+#if !USE_PARENS_IN_MDSPAN
       auto v = values[i, j];
 #else
       auto v = values(i, j);

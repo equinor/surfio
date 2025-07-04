@@ -3,14 +3,25 @@
 #include "irap.h"
 #include <filesystem>
 
-#if __cpp_lib_mdspan
+#if FORCE_PARENS_IN_MDSPAN
+#define USE_KOKKOS 1
+#define USE_PARENS_IN_MDSPAN 1
+#elif !__cpp_lib_mdspan
+#define USE_KOKKOS 1
+#define USE_PARENS_IN_MDSPAN !_multi__cpp_multidimensional_subscript
+#else
+#define USE_KOKKOS 0
+#define USE_PARENS_IN_MDSPAN 0
+#endif
+
+#if !USE_KOKKOS
 #include <mdspan>
 #else
 #include <experimental/mdspan>
 #endif
 
 namespace surfio::irap {
-#if __cpp_lib_mdspan
+#if !USE_KOKKOS
 using std::dynamic_extent;
 using std::extents;
 using std::mdspan;
@@ -20,7 +31,8 @@ using std::experimental::extents;
 using std::experimental::mdspan;
 #endif
 
-constexpr size_t MAX_PER_LINE = 9; // Maximum accepted by some software
+// Maximum accepted by some software
+constexpr size_t MAX_PER_LINE = 9;
 // write 8 values per block. this could make
 // it easier to use simd to import the values
 constexpr size_t PER_LINE_BINARY = 8;
