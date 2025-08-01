@@ -65,7 +65,7 @@ std::tuple<irap_header, const char*> get_header_binary(std::span<const char> buf
   int32_t dummy;
   float fdummy;
   auto ptr = &*buffer.begin();
-  auto end = &*buffer.end();
+  auto end = buffer.data() + buffer.size();
   try {
     ptr = read_chunk(
         ptr, end, dummy, header.nrow, header.xori, header.xmax, header.yori, header.ymax,
@@ -116,7 +116,7 @@ irap from_binary_file(const fs::path& file) {
 }
 
 irap from_binary_buffer(std::span<const char> buffer) {
-  auto buffer_end = &*buffer.begin() + buffer.size();
+  auto buffer_end = buffer.data() + buffer.size();
   auto [header, ptr] = get_header_binary(buffer);
   auto values = get_values_binary(ptr, buffer_end, header.ncol, header.nrow);
 
