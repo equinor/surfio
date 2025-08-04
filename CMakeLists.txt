@@ -12,6 +12,31 @@ find_package(
   OPTIONAL_COMPONENTS Development.Embed
 )
 
+include(CheckCXXSourceCompiles)
+check_cxx_source_compiles(
+  "
+    #include <charconv>
+    #include <string>
+    #include <system_error>
+
+    int main() {
+        std::string str = \"1.23\";
+        double value;
+        auto result = std::from_chars(str.data(), str.data() + str.size(), value);
+        if (result.ec != std::errc() || result.ptr != str.data() + str.size()) {
+            return 1;
+        }
+        return 0;
+    }
+  "
+  STD_FROM_CHARS_FLOAT_SUPPORT
+)
+if(NOT STD_FROM_CHARS_FLOAT_SUPPORT)
+  message(WARNING "std::from_chars with floating points is not supported.\n"
+                  "Falling back to using strtof.\nThis will make irap_import_ascii slower."
+  )
+endif()
+
 # dependencies
 include(FetchContent)
 FetchContent_Declare(
@@ -54,6 +79,9 @@ else()
   target_compile_options(surfio-compile-options INTERFACE -Wall -Wextra -Werror)
   target_compile_options(surfio-compile-options INTERFACE "$<$<CONFIG:Release>:-O3>")
 endif()
+target_compile_options(
+  surfio-compile-options INTERFACE "-DSTD_FROM_CHARS_FLOAT_SUPPORT=${STD_FROM_CHARS_FLOAT_SUPPORT}"
+)
 
 # surfio_lib
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/lib")
