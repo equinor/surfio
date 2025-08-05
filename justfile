@@ -5,11 +5,11 @@ container_engine := if which("docker") =~ ".*docker" {"docker"} else {"podman"}
 
 [doc("Configure cmake project")]
 configure-cpp:
-  uv run cmake --preset release-{{os_type}}
+  uv run --only-group=test cmake --preset release-{{os_type}}
 
 [doc("Build cmake project")]
 build-cpp:
-  uv run cmake --build --preset release-{{os_type}}
+  uv run --only-group=test cmake --build --preset release-{{os_type}}
 
 [doc("(Re)install surfio python package")]
 build-python:
@@ -21,7 +21,8 @@ test:
 
 [doc("Test cpp lib")]
 test-cpp:
-  uv run ctest --preset test-{{os_type}}
+  @just build-cpp
+  uv run --only-group=test ctest --preset test-{{os_type}}
 
 [doc("Test python package")]
 test-python:
