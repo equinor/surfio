@@ -31,14 +31,24 @@ check_cxx_source_compiles(
   "
   STD_FROM_CHARS_FLOAT_SUPPORT
 )
-if(NOT STD_FROM_CHARS_FLOAT_SUPPORT)
-  message(WARNING "std::from_chars with floating points is not supported.\n"
-                  "Falling back to using strtof.\nThis will make irap_import_ascii slower."
-  )
-endif()
 
 # dependencies
 include(FetchContent)
+if(NOT STD_FROM_CHARS_FLOAT_SUPPORT)
+  message(WARNING "std::from_chars with floating points is not supported.\n"
+                  "Falling back to using fast_float.\nHexadecimal input is not supported."
+  )
+  set(STD_FROM_CHARS_FLOAT_SUPPORT 0)
+  FetchContent_Declare(
+    fast_float
+    GIT_REPOSITORY https://github.com/fastfloat/fast_float.git
+    GIT_TAG 50a80a73ab2ab256ba1c3bf86923ddd8b4202bc7 # v8.0.2
+    GIT_SHALLOW TRUE
+  )
+
+  FetchContent_MakeAvailable(fast_float)
+endif()
+
 FetchContent_Declare(
   pybind11
   GIT_REPOSITORY https://github.com/pybind/pybind11
@@ -97,6 +107,9 @@ target_link_libraries(
   INTERFACE mdspan
   PRIVATE surfio-compile-options
 )
+if(NOT STD_FROM_CHARS_FLOAT_SUPPORT)
+  target_link_libraries(surfio_lib PRIVATE fast_float)
+endif()
 target_include_directories(
   surfio_lib
   INTERFACE ${SRC_PATH}/include
