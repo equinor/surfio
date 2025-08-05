@@ -3,7 +3,6 @@ import platform
 import shutil
 import subprocess
 import sys
-from contextlib import suppress
 from pathlib import Path
 
 from setuptools import Extension, setup
@@ -24,22 +23,17 @@ class CMakeBuild(build_ext):
         debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
         cfg = "debug" if debug else "release"
         build_dir = f"build/wheel/${cfg}"
+        ext_dir = Path(self.get_ext_fullpath(ext.name)).resolve().parent
 
         # Delete the old build directory
-        with suppress(Exception):
-            shutil.rmtree(build_dir)
-
-        # Must be in this form due to bug in .resolve() only fixed in Python 3.10+
-        ext_fullpath = Path.cwd() / self.get_ext_fullpath(ext.name)
-        extdir = ext_fullpath.parent.resolve()
+        shutil.rmtree(build_dir, ignore_errors=True)
 
         build_temp = Path(self.build_temp) / ext.name
-        if not build_temp.exists():
-            build_temp.mkdir(parents=True)
+        build_temp.mkdir(parents=True, exist_ok=True)
 
         cmake_args = [
-            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}{os.sep}",
-            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={extdir}{os.sep}",
+            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={ext_dir}{os.sep}",
+            f"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{cfg.upper()}={ext_dir}{os.sep}",
             f"-DPYTHON_EXECUTABLE={sys.executable}",
         ]
 
