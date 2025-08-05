@@ -34,3 +34,11 @@ test-cibuildwheel $CIBW_CONTAINER_ENGINE=container_engine:
 [doc("Compare surfio with xtgeo")]
 compare:
   uv run python tests/manual_performance_test/compare.py
+
+[doc("Install pre-commit hooks")]
+install-pre-commit-hooks:
+  uv run --only-group=dev pre-commit install
+
+[doc("Run all the linters/formatters")]
+lint:
+  uv run --only-group=dev pre-commit run --hook-stage pre-commit --all-files
