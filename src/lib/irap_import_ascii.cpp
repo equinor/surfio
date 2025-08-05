@@ -1,13 +1,9 @@
 #include "include/irap_import.h"
 #include "mmap_wrapper/mmap_wrapper.h"
-#include "strto_wrapper/strto_wrapper.h"
+#include "parse_number/parse_number.h"
 #include <algorithm>
-#include <charconv>
 #include <filesystem>
 #include <format>
-
-#include <errno.h>
-#include <stdlib.h>
 
 namespace fs = std::filesystem;
 
@@ -18,34 +14,16 @@ auto is_space = [](char ch) { return facet.is(std::ctype_base::space, ch); };
 
 template <typename T, typename... U>
 const char* read_headers(const char* start, const char* end, T& arg, U&... args) {
-  if constexpr (!STD_FROM_CHARS_FLOAT_SUPPORT && std::is_floating_point_v<T>) {
-#if !STD_FROM_CHARS_FLOAT_SUPPORT
-    static thread_local wrapped_c_locale wrapped_locale;
-    char* ptr;
-    if constexpr (std::is_same_v<T, float>)
-      arg = strtof_l_wrapper(start, &ptr, wrapped_locale.cLocale);
-    else if constexpr (std::is_same_v<T, double>)
-      arg = strtod_l_wrapper(start, &ptr, wrapped_locale.cLocale);
-    else
-      throw std::domain_error("Unsupported floating point type in irap headers");
-
-    if (errno != 0 || ptr == start || ptr > end)
-      throw std::domain_error("Failed to read irap headers");
-    start = ptr;
-#endif
-  } else {
-    // find first non whitespace char as from_chars does not ignore leading whitespace
-    start = std::find_if_not(start, end, is_space);
-    auto [ptr, ec] = std::from_chars(start, end, arg);
-    if (ec != std::errc{})
-      throw std::domain_error("Failed to read irap headers");
-    start = ptr;
-  }
+  // find first non whitespace char as from_chars does not ignore leading whitespace
+  start = std::find_if_not(start, end, is_space);
+  auto [ptr, ec] = parse_number::from_chars(start, end, arg);
+  if (ec != std::errc{})
+    throw std::domain_error("Failed to read irap headers");
 
   if constexpr (sizeof...(args) > 0)
-    start = read_headers(start, end, args...);
+    ptr = read_headers(ptr, end, args...);
 
-  return start;
+  return ptr;
 }
 
 std::tuple<irap_header, const char*> get_header(const char* start, const char* end) {
@@ -90,19 +68,11 @@ std::vector<float> get_values(const char* start, const char* end, int ncol, int 
           )
       );
 
-#if !STD_FROM_CHARS_FLOAT_SUPPORT
-    static thread_local wrapped_c_locale wrapped_locale;
-    char* ptr;
-    value = strtof_l_wrapper(start, &ptr, wrapped_locale.cLocale);
-    if (errno != 0 || ptr == start || ptr > end)
-      throw std::domain_error("Failed to read values during Irap ASCII import.");
-    start = ptr;
-#else
-    auto result = std::from_chars(start, end, value);
+    auto result = parse_number::from_chars(start, end, value);
     start = result.ptr;
     if (result.ec != std::errc())
       throw std::domain_error("Failed to read values during Irap ASCII import.");
-#endif
+
     if (value >= UNDEF_MAP_IRAP_ASCII)
       value = std::numeric_limits<float>::quiet_NaN();
 
