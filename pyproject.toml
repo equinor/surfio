@@ -33,7 +33,7 @@ dependencies = []
 [tool.setuptools_scm]
 
 [dependency-groups]
-test = ["pytest", "xtgeo"]
+test = ["pytest", "xtgeo", "numpy", "cmake"]
 dev = ["pre-commit", "deptry", { include-group = "test" }]
 
 [tool.mypy]
