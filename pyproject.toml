@@ -34,7 +34,7 @@ dependencies = []
 
 [dependency-groups]
 test = ["pytest", "xtgeo"]
-dev = ["pre-commit", { include-group = "test" }]
+dev = ["pre-commit", "deptry", { include-group = "test" }]
 
 [tool.mypy]
 files = "setup.py"
