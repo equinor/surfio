@@ -1,7 +1,7 @@
 #include "include/irap_import.h"
 #include "mmap_wrapper/mmap_wrapper.h"
+#include "parse_number/parse_number.h"
 #include <algorithm>
-#include <charconv>
 #include <filesystem>
 #include <format>
 
@@ -14,8 +14,9 @@ auto is_space = [](char ch) { return facet.is(std::ctype_base::space, ch); };
 
 template <typename T, typename... U>
 const char* read_headers(const char* start, const char* end, T& arg, U&... args) {
+  // find first non whitespace char as from_chars does not ignore leading whitespace
   start = std::find_if_not(start, end, is_space);
-  auto [ptr, ec] = std::from_chars(start, end, arg);
+  auto [ptr, ec] = parse_number::from_chars(start, end, arg);
   if (ec != std::errc{})
     throw std::domain_error("Failed to read irap headers");
 
@@ -67,7 +68,7 @@ std::vector<float> get_values(const char* start, const char* end, int ncol, int 
           )
       );
 
-    auto result = std::from_chars(start, end, value);
+    auto result = parse_number::from_chars(start, end, value);
     start = result.ptr;
     if (result.ec != std::errc())
       throw std::domain_error("Failed to read values during Irap ASCII import.");

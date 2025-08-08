@@ -12,8 +12,43 @@ find_package(
   OPTIONAL_COMPONENTS Development.Embed
 )
 
+include(CheckCXXSourceCompiles)
+check_cxx_source_compiles(
+  "
+    #include <charconv>
+    #include <string>
+    #include <system_error>
+
+    int main() {
+        std::string str = \"1.23\";
+        double value;
+        auto result = std::from_chars(str.data(), str.data() + str.size(), value);
+        if (result.ec != std::errc() || result.ptr != str.data() + str.size()) {
+            return 1;
+        }
+        return 0;
+    }
+  "
+  STD_FROM_CHARS_FLOAT_SUPPORT
+)
+
 # dependencies
 include(FetchContent)
+if(NOT STD_FROM_CHARS_FLOAT_SUPPORT)
+  message(WARNING "std::from_chars with floating points is not supported.\n"
+                  "Falling back to using fast_float.\nHexadecimal input is not supported."
+  )
+  set(STD_FROM_CHARS_FLOAT_SUPPORT 0)
+  FetchContent_Declare(
+    fast_float
+    GIT_REPOSITORY https://github.com/fastfloat/fast_float.git
+    GIT_TAG 50a80a73ab2ab256ba1c3bf86923ddd8b4202bc7 # v8.0.2
+    GIT_SHALLOW TRUE
+  )
+
+  FetchContent_MakeAvailable(fast_float)
+endif()
+
 FetchContent_Declare(
   pybind11
   GIT_REPOSITORY https://github.com/pybind/pybind11
@@ -54,6 +89,9 @@ else()
   target_compile_options(surfio-compile-options INTERFACE -Wall -Wextra -Werror)
   target_compile_options(surfio-compile-options INTERFACE "$<$<CONFIG:Release>:-O3>")
 endif()
+target_compile_options(
+  surfio-compile-options INTERFACE "-DSTD_FROM_CHARS_FLOAT_SUPPORT=${STD_FROM_CHARS_FLOAT_SUPPORT}"
+)
 
 # surfio_lib
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/lib")
@@ -69,6 +107,9 @@ target_link_libraries(
   INTERFACE mdspan
   PRIVATE surfio-compile-options
 )
+if(NOT STD_FROM_CHARS_FLOAT_SUPPORT)
+  target_link_libraries(surfio_lib PRIVATE fast_float)
+endif()
 target_include_directories(
   surfio_lib
   INTERFACE ${SRC_PATH}/include
