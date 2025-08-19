@@ -10,22 +10,22 @@ pip install .
 
 ## Usage
 
-Irap surfaces can be imported using the `import_ascii` and `import_ascii_file` methods of `IrapSurface`.
+Irap surfaces can be imported using the `from_ascii_file`, `from_ascii_string`, `from_binary_file` and `from_binary_buffer` methods of `IrapSurface`.
 
 ```python
 import surfio
 
 
-surface = surfio.IrapSurface.import_ascii_file("./file.irap")
+surface = surfio.IrapSurface.from_ascii_file("./file.irap")
 print(surface.header.ncol, surface.header.nrow) # 10, 11
 print(surface.values.shape) # (10, 11)
 ```
 
-`import_ascii_file` is equivalent to
+`from_ascii_file` is equivalent to
 
 ```python
 with open("./file.irap") as f:
-    surface = surfio.IrapSurface.import_ascii(f.read())
+    surface = surfio.IrapSurface.from_ascii_string(f.read())
 ```
 
 but is more performant.
@@ -49,14 +49,14 @@ Exporting irap surfaces can be done with
         ),
         values=np.zeros((3, 2)),
     )
-    surface.export_ascii_file("./file.txt")
+    surface.to_ascii_file("./file.txt")
 ```
 
 which is equivalent to:
 
 ```python
 with open("./file.irap", mode="w") as f:
-    f.write(surface.export_ascii())
+    f.write(surface.to_ascii_file())
 ```
 
 ## Development
