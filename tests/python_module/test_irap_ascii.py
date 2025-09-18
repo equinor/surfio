@@ -165,7 +165,7 @@ def test_header_can_have_high_precision():
 
 def test_import_and_export_are_inverse():
     surface = surfio.IrapSurface(
-        surfio.IrapHeader(ncol=3, nrow=2, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0),
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=2.0, yinc=2.0, xmax=4.0, ymax=2.0),
         values=np.arange(6, dtype=np.float32).reshape((3, 2)),
     )
     roundtrip = surfio.IrapSurface.from_ascii_string(surface.to_ascii_string())
@@ -176,7 +176,7 @@ def test_import_and_export_are_inverse():
 def test_import_and_export_file_are_inverse(tmp_path):
     irap_path = tmp_path / "test.irap"
     surface = surfio.IrapSurface(
-        surfio.IrapHeader(ncol=3, nrow=2, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0),
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=2.0, yinc=2.0, xmax=4.0, ymax=2.0),
         values=np.arange(6, dtype=np.float32).reshape((3, 2)),
     )
     surface.to_ascii_file(str(irap_path))
@@ -210,8 +210,8 @@ def test_exporting_produces_max_9_values_per_line():
 
 def test_surfio_can_export_values_in_fortran_order():
     srf = surfio.IrapSurface(
-        surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=8.0, ymax=8.0),
-        values=np.asfortranarray(np.arange(6, dtype=np.float32).reshape((3, 2))),
+        surfio.IrapHeader(ncol=3, nrow=4, xinc=1.0, yinc=1.0, xmax=2.0, ymax=3.0),
+        values=np.asfortranarray(np.arange(12, dtype=np.float32).reshape((3, 4))),
     )
     buffer = srf.to_ascii_string()
     srf_imported = surfio.IrapSurface.from_ascii_string(buffer)
