@@ -16,6 +16,8 @@ def compare_xtgeo_surface_with_surfio_header(
     assert xtgeo_surface.yori == surfio_header.yori
     assert xtgeo_surface.xinc == surfio_header.xinc
     assert xtgeo_surface.yinc == surfio_header.yinc
+    assert xtgeo_surface.xmax == surfio_header.xmax
+    assert xtgeo_surface.ymax == surfio_header.ymax
     assert xtgeo_surface.rotation == surfio_header.rot
 
 
@@ -53,7 +55,7 @@ def test_binary_xtgeo_is_imported_correctly_in_surfio():
 
 def test_surfio_can_import_data_exported_from_surfio():
     srf = surfio.IrapSurface(
-        surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=8.0, ymax=8.0),
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=2.0, ymax=1.0),
         values=np.arange(6, dtype=np.float32).reshape((3, 2)),
     )
     buffer = srf.to_binary_buffer()
@@ -65,7 +67,7 @@ def test_surfio_can_import_data_exported_from_surfio():
 
 def test_surfio_can_export_values_in_fortran_order():
     srf = surfio.IrapSurface(
-        surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=8.0, ymax=8.0),
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=2.0, ymax=1.0),
         values=np.asfortranarray(np.arange(6, dtype=np.float32).reshape((3, 2))),
     )
     buffer = srf.to_binary_buffer()
@@ -77,7 +79,7 @@ def test_surfio_can_export_values_in_fortran_order():
 
 def test_xtgeo_can_import_data_exported_from_surfio(tmp_path):
     srf = surfio.IrapSurface(
-        surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=8.0, ymax=8.0),
+        surfio.IrapHeader(ncol=3, nrow=2, xinc=1.0, yinc=1.0, xmax=2.0, ymax=1.0),
         values=np.arange(6, dtype=np.float32).reshape((3, 2)),
     )
     srf.to_binary_file(str(tmp_path / "test.irap"))

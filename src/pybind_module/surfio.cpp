@@ -25,6 +25,13 @@ irap::surf_span make_surf_span(const irap_python& ip) {
   return irap::surf_span{ip.values.data(), ip.values.shape(0), ip.values.shape(1)};
 }
 
+surfio::irap::irap_header fill_header(const surfio::irap::irap_header& head) {
+  auto header = head;
+  header.xmax = header.xori + (header.ncol - 1) * header.xinc;
+  header.ymax = header.yori + (header.nrow - 1) * header.yinc;
+
+  return header;
+}
 PYBIND11_MODULE(surfio, m) {
   py::class_<irap::irap_header>(m, "IrapHeader")
       .def(
@@ -123,23 +130,23 @@ PYBIND11_MODULE(surfio, m) {
       .def(
           "to_ascii_string",
           [](const irap_python& ip) -> std::string {
-            return irap::to_ascii_string(ip.header, make_surf_span(ip));
+            return irap::to_ascii_string(fill_header(ip.header), make_surf_span(ip));
           }
       )
       .def(
           "to_ascii_file",
           [](const irap_python& ip, fs::path file) -> void {
-            irap::to_ascii_file(file, ip.header, make_surf_span(ip));
+            irap::to_ascii_file(file, fill_header(ip.header), make_surf_span(ip));
           }
       )
       .def(
           "to_binary_buffer",
           [](const irap_python& ip) -> py::bytes {
-            auto buffer = irap::to_binary_buffer(ip.header, make_surf_span(ip));
+            auto buffer = irap::to_binary_buffer(fill_header(ip.header), make_surf_span(ip));
             return py::bytes(buffer);
           }
       )
       .def("to_binary_file", [](const irap_python& ip, fs::path file) -> void {
-        irap::to_binary_file(file, ip.header, make_surf_span(ip));
+        irap::to_binary_file(file, fill_header(ip.header), make_surf_span(ip));
       });
 }
