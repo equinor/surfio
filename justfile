@@ -1,7 +1,7 @@
-set unstable
+set unstable # "which" command is unstable
 
 os_type := if os() == "windows" { "windows" } else { "posix" }
-container_engine := if which("docker") =~ ".*docker" {"docker"} else {"podman"}
+container_engine := if which("podman") =~ ".*podman" {"podman"} else {"docker"}
 
 [doc("Configure cmake project")]
 configure-cpp:
