@@ -32,7 +32,7 @@ surfio::irap::irap_header fill_header(const surfio::irap::irap_header& head) {
 
   return header;
 }
-PYBIND11_MODULE(surfio, m) {
+PYBIND11_MODULE(_surfio, m) {
   py::class_<irap::irap_header>(m, "IrapHeader")
       .def(
           py::init<

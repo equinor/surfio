@@ -10,6 +10,9 @@ CMakeUserPresets.json
 __pycache__
 **/*.egg-info/
 
+# cibuildwheel
+wheelhouse/
+
 src/surfio.cpython*.so
 
 # IDE files
