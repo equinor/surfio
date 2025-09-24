@@ -3,8 +3,9 @@ project(surfio LANGUAGES CXX)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 find_package(
   Python 3.11 REQUIRED
@@ -44,6 +45,7 @@ if(NOT STD_FROM_CHARS_FLOAT_SUPPORT)
     GIT_REPOSITORY https://github.com/fastfloat/fast_float.git
     GIT_TAG 50a80a73ab2ab256ba1c3bf86923ddd8b4202bc7 # v8.0.2
     GIT_SHALLOW TRUE
+    EXCLUDE_FROM_ALL
   )
 
   FetchContent_MakeAvailable(fast_float)
@@ -53,6 +55,7 @@ FetchContent_Declare(
   pybind11
   GIT_REPOSITORY https://github.com/pybind/pybind11
   GIT_TAG a2e59f0e7065404b44dfe92a28aca47ba1378dc4 # v2.13
+  EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(pybind11)
 
@@ -62,6 +65,7 @@ FetchContent_Declare(
   mdspan
   GIT_REPOSITORY https://github.com/kokkos/mdspan.git
   GIT_TAG 9ceface91483775a6c74d06ebf717bbb2768452f # mdspan-0.6.0
+  EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(mdspan)
 
@@ -69,6 +73,7 @@ FetchContent_Declare(
   mio
   GIT_REPOSITORY https://github.com/vimpunk/mio
   GIT_TAG 8b6b7d878c89e81614d05edca7936de41ccdd2da
+  EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(mio)
 
@@ -76,6 +81,7 @@ FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
   GIT_TAG 2b60af89e23d28eefc081bc930831ee9d45ea58b # v3.8.1
+  EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(Catch2)
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
@@ -119,8 +125,10 @@ target_include_directories(
 
 # surfio python module
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/src/pybind_module")
-pybind11_add_module(surfio MODULE ${SRC_PATH}/surfio.cpp)
-target_link_libraries(surfio PRIVATE surfio_lib surfio-compile-options)
+pybind11_add_module(_surfio MODULE ${SRC_PATH}/surfio.cpp)
+target_link_libraries(_surfio PRIVATE surfio_lib surfio-compile-options)
+
+install(TARGETS _surfio DESTINATION surfio)
 
 # C++ tests
 set(SRC_PATH "${CMAKE_CURRENT_LIST_DIR}/tests/lib")
