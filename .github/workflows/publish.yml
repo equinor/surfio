@@ -28,7 +28,7 @@ jobs:
       CIBW_BUILD: ${{ matrix.python[1] }}-${{ matrix.os_arch[1] }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           submodules: True
