@@ -17,6 +17,7 @@ jobs:
       matrix:
         python:
           - ["3.11", cp311]
+          - ["3.14", cp314]
         os_arch:
           - [ubuntu-latest, manylinux_x86_64]
           - [ubuntu-24.04-arm, manylinux_aarch64]
