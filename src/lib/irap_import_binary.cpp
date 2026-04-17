@@ -75,7 +75,15 @@ std::tuple<irap_header, const char*> get_header_binary(std::span<const char> buf
       throw std::domain_error(
           std::format("Incorrect magic number: {}. Expected {}", dummy, irap_header::id)
       );
+    if (header.nrow < 0)
+      throw std::domain_error(
+          std::format("negative nrow: {}", header.nrow)
+      );
     ptr = read_chunk(ptr, end, header.ncol, header.rot, header.xrot, header.yrot);
+    if (header.ncol < 0)
+      throw std::domain_error(
+          std::format("negative ncol: {}", header.ncol)
+      );
     ptr = read_chunk(ptr, end, fdummy, fdummy, dummy, dummy, dummy, dummy, dummy);
   } catch (const std::exception& e) {
     throw std::domain_error(std::format("Failed to read irap headers: {}", e.what()));
