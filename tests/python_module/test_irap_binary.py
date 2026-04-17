@@ -97,3 +97,24 @@ def test_exporting_nan() -> None:
 
     srf_export = surface.to_binary_buffer()
     assert struct.unpack("f", srf_export[107:103:-1])[0] >= 1e30
+
+
+def test_that_negative_ncol_and_nrow_results_in_value_error():
+    with pytest.raises(ValueError, match="negative nrow"):
+        # The following is a surface that can be recreated with
+        #
+        # IrapSurface(
+        #     IrapHeader(ncol=-1, nrow=-2, xinc=1.0, yinc=1.0, xmax=2.0, ymax=1.0),
+        #     values=np.arange(2, dtype=np.float32).reshape((1, 2)),
+        # ).to_binary_buffer()
+        # Including it here as bytes to avoid having to deal with validation on
+        # before calling to_binary_buffer
+        surfio.IrapSurface.from_binary_buffer(
+            b"\x00\x00\x00 \xff\xff\xfc\x1c\xff\xff\xff\xfe\x00\x00\x00\x00\xc0"
+            b"\x00\x00\x00\x00\x00\x00\x00\xc0@\x00\x00?\x80\x00\x00?\x80\x00"
+            b"\x00\x00\x00\x00 \x00\x00\x00\x10\xff\xff\xff\xff\x00\x00\x00\x00"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x1c"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x1c"
+            b"\x00\x00\x00\x08\x00\x00\x00\x00?\x80\x00\x00\x00\x00\x00\x08"
+        )
