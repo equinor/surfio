@@ -92,8 +92,10 @@ std::tuple<irap_header, const char*> get_header_binary(std::span<const char> buf
   return {header, ptr};
 }
 
-std::vector<float> get_values_binary(const char* start, const char* end, int ncol, int nrow) {
+std::vector<float> get_values_binary(const char* start, const char* end, size_t ncol, size_t nrow) {
   const size_t nvalues = ncol * nrow;
+  if (static_cast<size_t>(end - start) / 4 < nvalues)
+    throw std::length_error("ncol and nrow declared in header exceed length of input");
   auto values = std::vector<float>(nvalues);
   auto ptr = start;
 

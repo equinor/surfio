@@ -25,7 +25,13 @@ requires-python = ">=3.11"
 dependencies = []
 
 [dependency-groups]
-test = ["pytest", "xtgeo", "numpy", "cmake"]
+test = [
+  "pytest",
+  'pytest-memray; platform_system != "Windows"',
+  "xtgeo",
+  "numpy",
+  "cmake"
+]
 dev = ["pre-commit", "deptry", { include-group = "test" }]
 
 [tool.pytest.ini_options]
@@ -33,6 +39,9 @@ minversion = "6.0"
 addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
 xfail_strict = true
 filterwarnings = ["error"]
+markers = [
+    "limit_memory(limit): memray memory limit marker (provided by pytest-memray on non-Windows)",
+]
 testpaths = ["tests/python_module"]
 
 [tool.setuptools_scm]
