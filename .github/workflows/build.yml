@@ -7,6 +7,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Python ${{ matrix.python[0] }} on ${{ matrix.os_arch[0] }}-${{ matrix.os_arch[1] }}
@@ -17,6 +20,7 @@ jobs:
       matrix:
         python:
           - ["3.11", cp311]
+          - ["3.14", cp314]
         os_arch:
           - [ubuntu-latest, manylinux_x86_64]
           - [ubuntu-24.04-arm, manylinux_aarch64]
@@ -26,18 +30,18 @@ jobs:
       CIBW_BUILD: ${{ matrix.python[1] }}-${{ matrix.os_arch[1] }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           submodules: True
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: ${{ matrix.python[0] }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
 
       - name: Configure compiler vars [macos]
         if: ${{ contains(runner.os, 'macos') }}

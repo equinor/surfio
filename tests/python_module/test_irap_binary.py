@@ -1,5 +1,6 @@
 import struct
 from io import BytesIO
+import sys
 
 import numpy as np
 import pytest
@@ -39,7 +40,7 @@ def test_short_files_result_in_value_error():
     file_buffer = BytesIO()
     srf.to_file(file_buffer, "irap_binary")
     file_buffer.truncate(100)
-    with pytest.raises(ValueError, match="End of file reached"):
+    with pytest.raises(ValueError, match="ncol and nrow declared in header"):
         _ = surfio.IrapSurface.from_binary_buffer(file_buffer.getvalue())
 
 
@@ -97,3 +98,40 @@ def test_exporting_nan() -> None:
 
     srf_export = surface.to_binary_buffer()
     assert struct.unpack("f", srf_export[107:103:-1])[0] >= 1e30
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="memray not available on windows")
+@pytest.mark.limit_memory("10 MB")
+def test_that_header_declarations_do_not_cause_increased_allocation() -> None:
+    # Surface has just one value, but header declares 2**22 values ~64mb
+    surface = surfio.IrapSurface(
+        surfio.IrapHeader(
+            ncol=2**12, nrow=2**12, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0
+        ),
+        values=np.array([[0.0]], dtype=np.float32),
+    )
+
+    buf = surface.to_binary_buffer()
+    with pytest.raises(ValueError, match="ncol and nrow declared in header"):
+        surfio.IrapSurface.from_binary_buffer(buf)
+
+
+def test_that_negative_ncol_and_nrow_results_in_value_error():
+    with pytest.raises(ValueError, match="negative nrow"):
+        # The following is a surface that can be recreated with
+        #
+        # IrapSurface(
+        #     IrapHeader(ncol=-1, nrow=-2, xinc=1.0, yinc=1.0, xmax=2.0, ymax=1.0),
+        #     values=np.arange(2, dtype=np.float32).reshape((1, 2)),
+        # ).to_binary_buffer()
+        # Including it here as bytes to avoid having to deal with validation on
+        # before calling to_binary_buffer
+        surfio.IrapSurface.from_binary_buffer(
+            b"\x00\x00\x00 \xff\xff\xfc\x1c\xff\xff\xff\xfe\x00\x00\x00\x00\xc0"
+            b"\x00\x00\x00\x00\x00\x00\x00\xc0@\x00\x00?\x80\x00\x00?\x80\x00"
+            b"\x00\x00\x00\x00 \x00\x00\x00\x10\xff\xff\xff\xff\x00\x00\x00\x00"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x1c"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x1c"
+            b"\x00\x00\x00\x08\x00\x00\x00\x00?\x80\x00\x00\x00\x00\x00\x08"
+        )

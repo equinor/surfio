@@ -75,7 +75,15 @@ std::tuple<irap_header, const char*> get_header_binary(std::span<const char> buf
       throw std::domain_error(
           std::format("Incorrect magic number: {}. Expected {}", dummy, irap_header::id)
       );
+    if (header.nrow < 0)
+      throw std::domain_error(
+          std::format("negative nrow: {}", header.nrow)
+      );
     ptr = read_chunk(ptr, end, header.ncol, header.rot, header.xrot, header.yrot);
+    if (header.ncol < 0)
+      throw std::domain_error(
+          std::format("negative ncol: {}", header.ncol)
+      );
     ptr = read_chunk(ptr, end, fdummy, fdummy, dummy, dummy, dummy, dummy, dummy);
   } catch (const std::exception& e) {
     throw std::domain_error(std::format("Failed to read irap headers: {}", e.what()));
@@ -84,8 +92,10 @@ std::tuple<irap_header, const char*> get_header_binary(std::span<const char> buf
   return {header, ptr};
 }
 
-std::vector<float> get_values_binary(const char* start, const char* end, int ncol, int nrow) {
+std::vector<float> get_values_binary(const char* start, const char* end, size_t ncol, size_t nrow) {
   const size_t nvalues = ncol * nrow;
+  if (static_cast<size_t>(end - start) / 4 < nvalues)
+    throw std::length_error("ncol and nrow declared in header exceed length of input");
   auto values = std::vector<float>(nvalues);
   auto ptr = start;
 
