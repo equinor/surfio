@@ -8,7 +8,7 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 find_package(
-  Python 3.11 REQUIRED
+  Python 3.12 REQUIRED
   COMPONENTS Development.Module Interpreter
   OPTIONAL_COMPONENTS Development.Embed
 )
