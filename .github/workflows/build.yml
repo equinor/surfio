@@ -19,6 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         python:
+          - ["3.12", cp312]
           - ["3.14", cp314]
         os_arch:
           - [ubuntu-latest, manylinux_x86_64]
