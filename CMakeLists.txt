@@ -140,6 +140,17 @@ target_link_libraries(tests PRIVATE Catch2::Catch2WithMain surfio_lib)
 if(TARGET Python::Python)
   target_sources(tests PRIVATE ${SRC_PATH}/test_irap_header.cpp)
   target_link_libraries(tests PRIVATE pybind11::embed)
+  if(WIN32)
+    # Ensure the Python runtime DLL is next to the test executable so that Catch2's
+    # catch_discover_tests (which runs the executable at build time to enumerate tests)
+    # can find it, regardless of whether it happens to be on PATH.
+    add_custom_command(
+      TARGET tests
+      POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:Python::Python>"
+              "$<TARGET_FILE_DIR:tests>"
+    )
+  endif()
 endif()
 include(CTest)
 include(Catch)
