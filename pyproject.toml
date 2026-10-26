@@ -71,6 +71,9 @@ fork-strategy = "requires-python"
 exclude-newer = "7 days"
 
 [tool.uv.exclude-newer-package]
+certifi = false # Needed until 2026-11-03
+setuptools = false # Needed until 2026-11-03
+virtualenv = false # Needed until 2026-11-03
 xtgeo = false # Developed by Equinor
 
 [tool.ruff]
