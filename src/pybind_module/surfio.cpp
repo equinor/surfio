@@ -21,8 +21,8 @@ irap_python* make_irap_python(const irap::irap& data) {
   };
 }
 
-irap::surf_span make_surf_span(const irap_python& ip) {
-  return irap::surf_span{ip.values.data(), ip.values.shape(0), ip.values.shape(1)};
+irap::surf_span make_surf_span(const py::array_t<float>& values) {
+  return irap::surf_span{values.data(), values.shape(0), values.shape(1)};
 }
 
 surfio::irap::irap_header fill_header(const surfio::irap::irap_header& head) {
@@ -130,23 +130,46 @@ PYBIND11_MODULE(_surfio, m) {
       .def(
           "to_ascii_string",
           [](const irap_python& ip) -> std::string {
-            return irap::to_ascii_string(fill_header(ip.header), make_surf_span(ip));
+            auto header = fill_header(ip.header);
+            // keep the array alive while the GIL is released
+            auto values = ip.values;
+            auto span = make_surf_span(values);
+            py::gil_scoped_release release;
+            return irap::to_ascii_string(header, span);
           }
       )
       .def(
           "to_ascii_file",
           [](const irap_python& ip, fs::path file) -> void {
-            irap::to_ascii_file(file, fill_header(ip.header), make_surf_span(ip));
+            auto header = fill_header(ip.header);
+            // keep the array alive while the GIL is released
+            auto values = ip.values;
+            auto span = make_surf_span(values);
+            py::gil_scoped_release release;
+            irap::to_ascii_file(file, header, span);
           }
       )
       .def(
           "to_binary_buffer",
           [](const irap_python& ip) -> py::bytes {
-            auto buffer = irap::to_binary_buffer(fill_header(ip.header), make_surf_span(ip));
+            auto header = fill_header(ip.header);
+            // keep the array alive while the GIL is released
+            auto values = ip.values;
+            auto span = make_surf_span(values);
+            std::string buffer;
+            {
+              py::gil_scoped_release release;
+              buffer = irap::to_binary_buffer(header, span);
+            }
             return py::bytes(buffer);
           }
       )
       .def("to_binary_file", [](const irap_python& ip, fs::path file) -> void {
-        irap::to_binary_file(file, fill_header(ip.header), make_surf_span(ip));
+        auto header = fill_header(ip.header);
+        // keep the array alive while the GIL is released
+        auto values = ip.values;
+        auto span = make_surf_span(values);
+        py::gil_scoped_release release;
+        irap::to_binary_file(file, header, span);
       });
 }
