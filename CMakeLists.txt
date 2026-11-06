@@ -90,10 +90,8 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 add_library(surfio-compile-options INTERFACE)
 if(MSVC)
   target_compile_options(surfio-compile-options INTERFACE /W4 /WX /sdl /permissive-)
-  target_compile_options(surfio-compile-options INTERFACE "$<$<CONFIG:Release>:/O2 /Oi /Gy>")
 else()
   target_compile_options(surfio-compile-options INTERFACE -Wall -Wextra -Werror)
-  target_compile_options(surfio-compile-options INTERFACE "$<$<CONFIG:Release>:-O3>")
 endif()
 target_compile_options(
   surfio-compile-options INTERFACE "-DSTD_FROM_CHARS_FLOAT_SUPPORT=${STD_FROM_CHARS_FLOAT_SUPPORT}"
