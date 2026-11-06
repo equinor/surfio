@@ -29,7 +29,7 @@ test = [
   'pytest-memray; platform_system != "Windows"',
   "xtgeo",
   "numpy",
-  "cmake"
+  "cmake",
 ]
 dev = ["pre-commit", "deptry", "rust-just", { include-group = "test" }]
 
@@ -39,7 +39,7 @@ addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
 xfail_strict = true
 filterwarnings = ["error"]
 markers = [
-    "limit_memory(limit): memray memory limit marker (provided by pytest-memray on non-Windows)",
+  "limit_memory(limit): memray memory limit marker (provided by pytest-memray on non-Windows)",
 ]
 testpaths = ["tests/python_module"]
 
@@ -68,15 +68,18 @@ manylinux-aarch64-image = "manylinux_2_28"
 manylinux-pypy_x86_64-image = "manylinux_2_28"
 manylinux-pypy_aarch64-image = "manylinux_2_28"
 
+[tool.deptry.per_rule_ignores]
+DEP002 = ["numpy"]
+
 [tool.uv]
 fork-strategy = "requires-python"
 exclude-newer = "7 days"
 
 [tool.uv.exclude-newer-package]
-certifi = false # Needed until 2026-11-03
+certifi = false    # Needed until 2026-11-03
 setuptools = false # Needed until 2026-11-03
 virtualenv = false # Needed until 2026-11-03
-xtgeo = false # Developed by Equinor
+xtgeo = false      # Developed by Equinor
 
 [tool.ruff]
 target-version = "py312"
