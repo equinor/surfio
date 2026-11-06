@@ -1566,6 +1566,9 @@ wheels = [
 [[package]]
 name = "surfio"
 source = { editable = "." }
+dependencies = [
+    { name = "numpy" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -1587,6 +1590,7 @@ test = [
 ]
 
 [package.metadata]
+requires-dist = [{ name = "numpy" }]
 
 [package.metadata.requires-dev]
 dev = [
