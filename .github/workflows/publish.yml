@@ -26,6 +26,7 @@ jobs:
           - ["3.12", cp312]
           - ["3.13", cp313]
           - ["3.14", cp314]
+          - ["3.15", cp315]
         os_arch:
           - [ubuntu-latest, manylinux_x86_64]
           - [ubuntu-24.04-arm, manylinux_aarch64]
