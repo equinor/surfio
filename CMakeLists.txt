@@ -43,7 +43,7 @@ if(NOT STD_FROM_CHARS_FLOAT_SUPPORT)
   FetchContent_Declare(
     fast_float
     GIT_REPOSITORY https://github.com/fastfloat/fast_float.git
-    GIT_TAG 50a80a73ab2ab256ba1c3bf86923ddd8b4202bc7 # v8.0.2
+    GIT_TAG dbeabeeb3e6791cb96994c2a7a084c36e62ccfb2 # v8.3.3
     GIT_SHALLOW TRUE
     EXCLUDE_FROM_ALL
   )
@@ -74,13 +74,14 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/vimpunk/mio
   GIT_TAG 8b6b7d878c89e81614d05edca7936de41ccdd2da
   EXCLUDE_FROM_ALL
+  SOURCE_SUBDIR single_include
 )
 FetchContent_MakeAvailable(mio)
 
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG 2b60af89e23d28eefc081bc930831ee9d45ea58b # v3.8.1
+  GIT_TAG 08092139210881f01a34e60c5f2fd6afa0ea4024 # v3.16.1
   EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(Catch2)
