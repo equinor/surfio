@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core", "setuptools_scm"]
+requires = ["scikit-build-core >= 1.0", "setuptools_scm"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -50,9 +50,11 @@ if.platform-system = "^win.*"
 cmake.define = { CMAKE_TOOLCHAIN_FILE = "WindowsToolchain/Windows.MSVC.toolchain.cmake" }
 
 [tool.scikit-build]
-metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
-sdist.include = ["src/pybind_module/_version.py"]
+minimum-version = "build-system.requires"
 cmake.args = ["-G Ninja"]
+
+[[tool.dynamic-metadata]]
+provider = "scikit_build_core.metadata.setuptools_scm"
 
 [tool.cibuildwheel]
 build-frontend = "build[uv]"
