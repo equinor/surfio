@@ -1,6 +1,6 @@
 import struct
-from io import BytesIO
 import sys
+from io import BytesIO
 
 import numpy as np
 import pytest

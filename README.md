@@ -17,8 +17,8 @@ import surfio
 
 
 surface = surfio.IrapSurface.from_ascii_file("./file.irap")
-print(surface.header.ncol, surface.header.nrow) # 10, 11
-print(surface.values.shape) # (10, 11)
+print(surface.header.ncol, surface.header.nrow)  # 10, 11
+print(surface.values.shape)  # (10, 11)
 ```
 
 `from_ascii_file` is equivalent to

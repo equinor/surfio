@@ -73,8 +73,7 @@ FetchContent_Declare(
   mio
   GIT_REPOSITORY https://github.com/vimpunk/mio
   GIT_TAG 8b6b7d878c89e81614d05edca7936de41ccdd2da
-  EXCLUDE_FROM_ALL
-  SOURCE_SUBDIR single_include
+  EXCLUDE_FROM_ALL SOURCE_SUBDIR single_include
 )
 FetchContent_MakeAvailable(mio)
 
@@ -141,13 +140,14 @@ if(TARGET Python::Python)
   target_link_libraries(tests PRIVATE pybind11::embed)
   if(WIN32)
     # Ensure the Python runtime DLL is next to the test executable so that Catch2's
-    # catch_discover_tests (which runs the executable at build time to enumerate tests)
-    # can find it, regardless of whether it happens to be on PATH.
+    # catch_discover_tests (which runs the executable at build time to enumerate tests) can find it,
+    # regardless of whether it happens to be on PATH.
     add_custom_command(
       TARGET tests
       POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:Python::Python>"
               "$<TARGET_FILE_DIR:tests>"
+      COMMENT "Copying Python DLL next to tests"
     )
   endif()
 endif()
