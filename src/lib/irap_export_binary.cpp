@@ -3,11 +3,13 @@
 #include <algorithm>
 #include <array>
 #include <bit>
+#include <cerrno>
 #include <cmath>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <system_error>
 
 namespace fs = std::filesystem;
 
@@ -83,8 +85,15 @@ void write_values_binary(surf_span values, std::ostream& out) {
 
 void to_binary_file(const fs::path& file, const irap_header& header, surf_span values) {
   std::ofstream out(file, std::ios::binary);
-  write_header_binary(header, out);
-  write_values_binary(values, out);
+  if (out) {
+    write_header_binary(header, out);
+    write_values_binary(values, out);
+    out.close();
+  }
+  if (!out)
+    throw fs::filesystem_error(
+        "Failed to write irap file", file, std::error_code(errno, std::generic_category())
+    );
 }
 
 void to_binary_file(const fs::path& file, const irap& data) {

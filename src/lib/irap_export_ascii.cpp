@@ -1,5 +1,6 @@
 #include "include/irap.h"
 #include "include/irap_export.h"
+#include <cerrno>
 #include <cmath>
 #include <filesystem>
 #include <format>
@@ -7,6 +8,7 @@
 #include <iomanip>
 #include <ostream>
 #include <sstream>
+#include <system_error>
 
 namespace fs = std::filesystem;
 
@@ -44,8 +46,15 @@ void write_values_ascii(surf_span values, std::ostream& out) {
 
 void to_ascii_file(const fs::path& file, const irap_header& header, surf_span values) {
   std::ofstream out(file);
-  write_header_ascii(header, out);
-  write_values_ascii(values, out);
+  if (out) {
+    write_header_ascii(header, out);
+    write_values_ascii(values, out);
+    out.close();
+  }
+  if (!out)
+    throw fs::filesystem_error(
+        "Failed to write irap file", file, std::error_code(errno, std::generic_category())
+    );
 }
 
 void to_ascii_file(const fs::path& file, const irap& data) {

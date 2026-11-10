@@ -1,6 +1,7 @@
 #include "include/irap_pybind.h"
 #include "irap_export.h"
 #include "irap_import.h"
+#include <exception>
 #include <filesystem>
 #include <format>
 #include <pybind11/numpy.h>
@@ -33,6 +34,18 @@ surfio::irap::irap_header fill_header(const surfio::irap::irap_header& head) {
   return header;
 }
 PYBIND11_MODULE(_surfio, m) {
+  py::register_local_exception_translator([](std::exception_ptr p) {
+    try {
+      if (p)
+        std::rethrow_exception(p);
+    } catch (const fs::filesystem_error& e) {
+      py::set_error(
+          PyExc_OSError,
+          py::make_tuple(e.code().value(), e.code().message(), py::str(py::cast(e.path1())))
+      );
+    }
+  });
+
   py::class_<irap::irap_header>(m, "IrapHeader")
       .def(
           py::init<
