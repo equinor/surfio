@@ -21,7 +21,7 @@ irap_python* make_irap_python(const irap::irap& data) {
   };
 }
 
-irap::surf_span make_surf_span(const py::array_t<float>& values) {
+irap::surf_span make_surf_span(const values_array& values) {
   return irap::surf_span{values.data(), values.shape(0), values.shape(1)};
 }
 
@@ -68,11 +68,7 @@ PYBIND11_MODULE(_surfio, m) {
       .def_readwrite("yrot", &irap::irap_header::yrot);
 
   py::class_<irap_python>(m, "IrapSurface")
-      .def(
-          py::init<
-              irap::irap_header, py::array_t<float, py::array::c_style | py::array::forcecast>>(),
-          py::arg("header"), py::arg("values")
-      )
+      .def(py::init<irap::irap_header, values_array>(), py::arg("header"), py::arg("values"))
       .def(
           "__repr__",
           [](const irap_python& ip) {

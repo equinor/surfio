@@ -222,6 +222,17 @@ def test_surfio_can_export_values_in_fortran_order():
     assert srf.header == srf_imported.header
 
 
+def test_surfio_can_export_values_assigned_in_fortran_order():
+    values = np.arange(12, dtype=np.float32).reshape((3, 4))
+    srf = surfio.IrapSurface(
+        surfio.IrapHeader(ncol=3, nrow=4), values=np.zeros_like(values)
+    )
+    srf.values = np.asfortranarray(values)
+    srf_imported = surfio.IrapSurface.from_ascii_string(srf.to_ascii_string())
+
+    assert np.array_equal(srf_imported.values, values)
+
+
 @pytest.mark.skipif(sys.platform == "win32", reason="memray not available on windows")
 @pytest.mark.limit_memory("10 MB")
 def test_that_header_declarations_do_not_cause_increased_allocation() -> None:
