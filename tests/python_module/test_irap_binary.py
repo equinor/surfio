@@ -103,15 +103,13 @@ def test_exporting_nan() -> None:
 @pytest.mark.skipif(sys.platform == "win32", reason="memray not available on windows")
 @pytest.mark.limit_memory("10 MB")
 def test_that_header_declarations_do_not_cause_increased_allocation() -> None:
-    # Surface has just one value, but header declares 2**22 values ~64mb
     surface = surfio.IrapSurface(
-        surfio.IrapHeader(
-            ncol=2**12, nrow=2**12, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0
-        ),
+        surfio.IrapHeader(ncol=1, nrow=1),
         values=np.array([[0.0]], dtype=np.float32),
     )
-
     buf = surface.to_binary_buffer()
+    # Input has just one value, but nrow is set to 2**24 ~64mb
+    buf = buf[:8] + struct.pack(">i", 2**24) + buf[12:]
     with pytest.raises(ValueError, match="ncol and nrow declared in header"):
         surfio.IrapSurface.from_binary_buffer(buf)
 

@@ -21,7 +21,13 @@ irap_python* make_irap_python(const irap::irap& data) {
   };
 }
 
-irap::surf_span make_surf_span(const values_array& values) {
+irap::surf_span make_surf_span(const irap::irap_header& header, const values_array& values) {
+  if (values.ndim() != 2 || values.shape(0) != header.ncol || values.shape(1) != header.nrow)
+    throw py::value_error(
+        std::format(
+            "Shape of values does not match header (ncol={}, nrow={})", header.ncol, header.nrow
+        )
+    );
   return irap::surf_span{values.data(), values.shape(0), values.shape(1)};
 }
 
@@ -129,7 +135,7 @@ PYBIND11_MODULE(_surfio, m) {
             auto header = fill_header(ip.header);
             // keep the array alive while the GIL is released
             auto values = ip.values;
-            auto span = make_surf_span(values);
+            auto span = make_surf_span(header, values);
             py::gil_scoped_release release;
             return irap::to_ascii_string(header, span);
           }
@@ -140,7 +146,7 @@ PYBIND11_MODULE(_surfio, m) {
             auto header = fill_header(ip.header);
             // keep the array alive while the GIL is released
             auto values = ip.values;
-            auto span = make_surf_span(values);
+            auto span = make_surf_span(header, values);
             py::gil_scoped_release release;
             irap::to_ascii_file(file, header, span);
           }
@@ -151,7 +157,7 @@ PYBIND11_MODULE(_surfio, m) {
             auto header = fill_header(ip.header);
             // keep the array alive while the GIL is released
             auto values = ip.values;
-            auto span = make_surf_span(values);
+            auto span = make_surf_span(header, values);
             std::string buffer;
             {
               py::gil_scoped_release release;
@@ -164,7 +170,7 @@ PYBIND11_MODULE(_surfio, m) {
         auto header = fill_header(ip.header);
         // keep the array alive while the GIL is released
         auto values = ip.values;
-        auto span = make_surf_span(values);
+        auto span = make_surf_span(header, values);
         py::gil_scoped_release release;
         irap::to_binary_file(file, header, span);
       });
