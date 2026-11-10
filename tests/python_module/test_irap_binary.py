@@ -135,3 +135,14 @@ def test_that_negative_ncol_and_nrow_results_in_value_error():
             b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x1c"
             b"\x00\x00\x00\x08\x00\x00\x00\x00?\x80\x00\x00\x00\x00\x00\x08"
         )
+
+
+def test_that_more_values_than_declared_in_header_results_in_value_error():
+    surface = surfio.IrapSurface(
+        surfio.IrapHeader(ncol=1, nrow=1),
+        values=np.zeros((1, 1), dtype=np.float32),
+    )
+    header = surface.to_binary_buffer()[:100]
+    record_with_two_values = struct.pack(">i2fi", 8, 0.0, 0.0, 8)
+    with pytest.raises(ValueError, match="More values than declared in header"):
+        surfio.IrapSurface.from_binary_buffer(header + record_with_two_values)
