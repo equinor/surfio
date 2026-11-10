@@ -222,17 +222,37 @@ def test_surfio_can_export_values_in_fortran_order():
     assert srf.header == srf_imported.header
 
 
+def test_surfio_can_export_values_assigned_in_fortran_order():
+    values = np.arange(12, dtype=np.float32).reshape((3, 4))
+    srf = surfio.IrapSurface(
+        surfio.IrapHeader(ncol=3, nrow=4), values=np.zeros_like(values)
+    )
+    srf.values = np.asfortranarray(values)
+    srf_imported = surfio.IrapSurface.from_ascii_string(srf.to_ascii_string())
+
+    assert np.array_equal(srf_imported.values, values)
+
+
+@pytest.mark.parametrize("shape", [(2, 3), (6,), (3, 2, 2)])
+def test_exporting_values_with_wrong_shape_results_in_value_error(shape):
+    surface = surfio.IrapSurface(
+        surfio.IrapHeader(ncol=3, nrow=2), values=np.zeros(shape, dtype=np.float32)
+    )
+    with pytest.raises(ValueError, match="does not match header"):
+        surface.to_ascii_string()
+
+
 @pytest.mark.skipif(sys.platform == "win32", reason="memray not available on windows")
 @pytest.mark.limit_memory("10 MB")
 def test_that_header_declarations_do_not_cause_increased_allocation() -> None:
-    # Surface has just one value, but header declares 2**22 values ~64mb
-    surface = surfio.IrapSurface(
-        surfio.IrapHeader(
-            ncol=2**12, nrow=2**12, xinc=2.0, yinc=2.0, xmax=2.0, ymax=2.0
-        ),
-        values=np.array([[0.0]], dtype=np.float32),
-    )
-
-    string = surface.to_ascii_string()
+    # Input has just one value, but header declares 4096 * 4096 values ~64mb
     with pytest.raises(ValueError, match="ncol and nrow declared in header"):
-        surfio.IrapSurface.from_ascii_string(string)
+        surfio.IrapSurface.from_ascii_string(
+            """\
+            -996 4096 0.0 0.0
+            0.0 0.0 0.0 0.0
+            4096 0.0 0.0 0.0
+            0  0  0  0  0  0  0
+            0.000000
+            """
+        )
