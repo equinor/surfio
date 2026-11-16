@@ -101,6 +101,8 @@ std::vector<float> get_values_binary(const char* start, const char* end, size_t 
   for (auto i = 0u; i < nvalues;) {
     ptr = read_32bit_value(ptr, end, chunk_size);
     size_t values_left = chunk_size / 4; // each value is 32 bit
+    if (values_left > nvalues - i)
+      throw std::domain_error("More values than declared in header");
     for (auto j = 0u; j < values_left; ++j, ++i) {
       float value;
       ptr = read_32bit_value(ptr, end, value);

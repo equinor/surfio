@@ -1,4 +1,5 @@
 set unstable # "which" command is unstable
+set lists
 
 os_type := if os() == "windows" { "windows" } else { "posix" }
 container_engine := if which("podman") =~ ".*podman" {"podman"} else {"docker"}
