@@ -1,6 +1,7 @@
 #include "include/irap.h"
 #include "include/irap_export.h"
 #include <cerrno>
+#include <charconv>
 #include <cmath>
 #include <filesystem>
 #include <format>
@@ -9,12 +10,12 @@
 #include <ostream>
 #include <sstream>
 #include <system_error>
+#include <vector>
 
 namespace fs = std::filesystem;
 
 namespace surfio::irap {
 static const auto id = std::format("{} ", irap_header::id);
-static auto UNDEF_MAP_IRAP_STRING = std::format("{:f}", UNDEF_MAP_IRAP_ASCII);
 
 void write_header_ascii(const irap_header& header, std::ostream& out) {
   out << std::setprecision(6) << std::fixed << std::showpoint;
@@ -25,7 +26,11 @@ void write_header_ascii(const irap_header& header, std::ostream& out) {
 }
 
 void write_values_ascii(surf_span values, std::ostream& out) {
-  out << std::setprecision(4) << std::fixed << std::showpoint;
+  // -FLT_MAX with six decimals is 47 characters, followed by a separator
+  constexpr int MAX_VALUE_SIZE = 48;
+  std::vector<char> buf(1 << 16);
+  char* ptr = buf.data();
+  char* const end = ptr + buf.size();
   size_t values_on_current_line = 0;
   auto rows = values.extent(0);
   auto cols = values.extent(1);
@@ -36,12 +41,20 @@ void write_values_ascii(surf_span values, std::ostream& out) {
 #else
       auto v = values(i, j);
 #endif
-      out << (std::isnan(v) ? UNDEF_MAP_IRAP_STRING : std::format("{:f}", v));
+      if (std::isnan(v))
+        v = UNDEF_MAP_IRAP_ASCII;
+      ptr = std::to_chars(ptr, end, v, std::chars_format::fixed, 6).ptr;
 
       ++values_on_current_line %= MAX_PER_LINE;
-      out << (values_on_current_line ? " " : "\n");
+      *ptr++ = values_on_current_line ? ' ' : '\n';
+
+      if (end - ptr < MAX_VALUE_SIZE) {
+        out.write(buf.data(), ptr - buf.data());
+        ptr = buf.data();
+      }
     }
   }
+  out.write(buf.data(), ptr - buf.data());
 }
 
 void to_ascii_file(const fs::path& file, const irap_header& header, surf_span values) {

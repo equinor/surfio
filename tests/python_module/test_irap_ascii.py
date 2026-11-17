@@ -193,7 +193,27 @@ def test_exporting_nan_maps_to_9999900():
         values=np.array([[np.nan]], dtype=np.float32),
     )
 
-    assert "9999900.0000" in surface.to_ascii_string().split()[-1]
+    assert surface.to_ascii_string().split()[-1] == "9999900.000000"
+
+
+def test_exported_values_have_six_decimals():
+    largest = float(np.finfo(np.float32).max)
+    values = [0.5, -0.0, 1.9999999, largest, -largest]
+    text = [
+        "0.500000",
+        "-0.000000",
+        "2.000000",
+        "340282346638528859811704183484516925440.000000",
+        "-340282346638528859811704183484516925440.000000",
+    ]
+    repeats = 2000  # enough text to be written in several chunks
+    surface = surfio.IrapSurface(
+        surfio.IrapHeader(ncol=len(values) * repeats, nrow=1),
+        values=np.array(values * repeats, dtype=np.float32).reshape(-1, 1),
+    )
+    exported = surface.to_ascii_string()
+    assert exported.split()[-len(values) * repeats :] == text * repeats
+    assert all(len(line.split()) <= 9 for line in exported.splitlines())
 
 
 def test_exporting_produces_max_9_values_per_line():
