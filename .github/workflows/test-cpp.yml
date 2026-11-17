@@ -1,0 +1,47 @@
+name: Test C++
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+env:
+  UV_FROZEN: true
+
+jobs:
+  test-cpp:
+    name: C++ tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # The compiler used for the Linux wheels
+      CC: gcc-14
+      CXX: g++-14
+      CTEST_OUTPUT_ON_FAILURE: 1
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          enable-cache: true
+          prune-cache: false
+          python-version: "3.12"
+
+      # One test embeds python and imports surfio, which needs a python from uv
+      - name: Install surfio
+        run: uv sync --managed-python
+
+      - name: Run C++ tests
+        run: |
+          uv run just configure-cpp
+          uv run just test-cpp
